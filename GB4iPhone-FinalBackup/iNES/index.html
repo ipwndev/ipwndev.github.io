@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<link href="css/style.css" rel="stylesheet" media="screen" type="text/css" />
+<script src="javascript/functions.js" type="text/javascript"></script>
+<title>NES</title>
+<meta content="NES Emulator,iOS,HTML5" name="keywords" />
+<meta content="A proof of concept NES emulator for iPhone and HTML5 devices" name="description" />
+<script type="text/javascript">
+var answer = confirm ("This is just a test, to see if a full NES emulator would be probable as a Web App,this is just a tech demo and will not be updated,to continue loading press OK to continue loading this page, or CANCEL to be fowarded to the homepage.")
+if (!answer)
+window.location="http://gb4iphone.x10.mx/applist.html"
+</script>
+</head>
+
+<body>
+
+<div id="topbar">
+</div>
+<center>
+<div id="content">
+    <div id="emulator"></div>
+    
+
+
+    <script src="lib/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/dynamicaudio-min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/nes.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/cpu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/keyboard.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/mappers.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/papu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/ppu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/rom.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/ui.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var nes;
+        $(function() {
+            nes = new JSNES({
+                'ui': $('#emulator').JSNESUI({
+                    "Homebrew": [
+                        ['Concentration Room', 'roms/croom/croom.nes'],
+                        ['LJ65', 'roms/lj65/lj65.nes'],
+                    ],
+                                    })
+            });
+        });
+    </script>
+    <br>
+</center>  
+
+<!--
+  //to finish
+  //figure out how to make transparent backround table
+  <table border="0" bordercolor="#000000" style="background-color:#FFFFFF" width="100%" cellpadding="1" cellspacing="2">
+	<tr>
+		<td>   </td>
+		<td><input id="JSNES.Keyboard" type="button" value="UP"   onfocus="this.blur();" onclick="gbPin14&=0xFB"/>
+        </td>
+		<td>  </td>
+		<td><input id="JSNES.Keyboard" type="button" value="A"   onfocus="this.blur();" onclick="gbPin15&=0xFE"/>
+        </td>
+		<td><input id="JSNES.Keyboard" type="button" value="B"   onfocus="this.blur();" onclick="gbPin15&=0xFD"/>
+        </td>
+	</tr>
+	<tr>
+		<td><input id="JSNES.Keyboard" type="button" value="LEFT"   onfocus="this.blur();" onclick="gbPin14&=0xFD"/>
+        </td>
+		<td>   </td>
+		<td><input id="JSNES.Keyboard" type="button" value="RIGHT"   onfocus="this.blur();" onclick="gbPin14&=0xFE"/>
+        </td>
+		<td>   </td>
+		<td>   </td>
+	</tr>
+	<tr>
+		<td>   </td>
+		<td><input id="JSNES.Keyboard" type="button" value="DOWN"   onfocus="this.blur();" onclick="gbPin14&=0xF7"/>
+        </td>
+		<td>          </td>
+		<td><input id="gb_OnKeyDown_Event(e)" type="button" value="START"   onfocus="this.blur();" onclick="gbPin14&=0xFE"/>
+        </td>
+		<td> <input id="gb_OnKeyDown_Event(e)" type="button" value="SEL"   onfocus="this.blur();" onclick="gbPin15&=0xF7"/>
+        </td>
+	</tr>
+</table>
+<p style="font-family:verdana,arial,sans-serif;font-size:10px;">
+    
+    -->    
+
+    
+    
+    
+    </div>
+<div id="footer">
+	<!-- Support iWebKit by sending us traffic; please keep this footer on your page, consider it a thank you for my work :-) -->
+	<a class="noeffect" href="http://snippetspace.com">iNES powered by iWebKit.</a><a class="noeffect" href="http://fir.sh/projects/jsnes/">iNES core code created by BenFirshman</a>    </div>
+
+</body>
+
+</html>
+

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<rss xmlns:iweb="http://www.apple.com/iweb" version="2.0">
+  <channel>
+    <title>not a blog</title>
+    <link>http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog</link>
+    <description>Holy crap its a picture of a generic bridge. so badass. 
+Also &#x201C;What killed the dinosaurs? the ICE AGE&#x201D; Its all water under the bridge. The stories you are about to read are true, however the names have been changed to protect the innocent.</description>
+    <item>
+      <title>The not-so Affordable Healthcare Act</title>
+      <link>http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/10/10_The_not-so_Affordable_Healthcare_Act.html</link>
+      <guid isPermaLink="false">aaadc213-bb16-426e-9fbf-16d9e489150e</guid>
+      <pubDate>Thu, 10 Oct 2013 19:50:24 -0700</pubDate>
+      <iweb:comment enabled="0" count="0" link="http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/10/10_The_not-so_Affordable_Healthcare_Act.html#comment_layer"></iweb:comment>
+    </item>
+    <item>
+      <title>Down the Hard Road</title>
+      <link>http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/10/2_Down_the_Hard_Road.html</link>
+      <guid isPermaLink="false">b155cd9b-1ff1-4370-804b-02301296ae41</guid>
+      <pubDate>Wed, 2 Oct 2013 17:49:09 -0700</pubDate>
+      <iweb:comment enabled="0" count="0" link="http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/10/2_Down_the_Hard_Road.html#comment_layer"></iweb:comment>
+    </item>
+    <item>
+      <title>Well now, there it is.</title>
+      <link>http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/9/10_Well_now,_there_it_is..html</link>
+      <guid isPermaLink="false">48d33eab-2be3-4ceb-a2e9-c877b053196e</guid>
+      <pubDate>Tue, 10 Sep 2013 21:21:38 -0700</pubDate>
+      <iweb:comment enabled="0" count="0" link="http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog/Entries/2013/9/10_Well_now,_there_it_is..html#comment_layer"></iweb:comment>
+    </item>
+    <iweb:dateFormat>EEEE, MMMM d, yyyy</iweb:dateFormat>
+    <iweb:baseURL>http://matthewserver.tk/NO_FEAR/No_Fear/not_a_blog</iweb:baseURL>
+    <iweb:maximumSummaryItems>5</iweb:maximumSummaryItems>
+  </channel>
+</rss>

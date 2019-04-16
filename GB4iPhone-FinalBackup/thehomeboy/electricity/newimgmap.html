@@ -1,0 +1,33 @@
+todo insert circut imgmap, this is of the imgmap.png
+<img src="imgmap.png" alt="" usemap="#Map" />
+<map name="Map" id="Map">
+    <area alt="" title="" href="#" shape="rect" coords="104,137,138,206" />
+    <area alt="" title="" href="#" shape="rect" coords="74,47,169,98" />
+    <area alt="" title="" href="#" shape="rect" coords="21,144,65,189" />
+    <area alt="" title="" href="#" shape="rect" coords="19,50,61,122" />
+    [...]
+</map>
+
+
+also css for large content element:
+
+
+/* WideMiddle
+-----------------------------------------------------------------------------*/
+.middleWide {
+	width: 100%;
+	position: relative;
+}
+.middleWide:after {
+	display: table;
+	clear: both;
+	content: '';
+}
+.containerWide {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+.contentWide {
+	padding: 0 0 0 270px;
+}

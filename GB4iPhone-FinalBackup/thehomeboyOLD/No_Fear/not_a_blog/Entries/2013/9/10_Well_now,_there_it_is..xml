@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<content collectionGUID="63F913E4-C0D6-43F1-B375-23842844428F">
+  <lastEdited clientType="local-build-20131031" date="2013-10-31 19:25:10 -0700"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>Look at these badass rocks.</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Well now, there it is.</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>Tuesday, September 10, 2013</richText>
+  </textBox>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText>&#x201C;Allow me to break da ice&#x201D;.  This is intended to be a private blog(lol privacy in the modern world), however it is currently being hosted under my main server(this is going to end well, but thats what I get for being cheap and only keeping one server up and running 24/7. Back to business: this blog will probably die a cold death like the &#x201C;others&#x201D; so don&#x2019;t expect me to keep a perfect primary source quality record.  It is not gonna happen.&#xD;//init ranting.framework &#xD;    print col1 &#x201D;in this world we live in the amount of ignorance is to damn high&#x201D;&#xD;    print col2 &#x201C;Why do wars start&#x201D;&#xD;//suspend ranting.framework&#xD;Also I still use iWeb, Deal with it. this website will hopefully improve what limited writing skills I have as well as provide an outlet for a LOT of built up STRESS.&#xD;thanks, and as always have nice day. DUCES&#xD;&lt;!--End Blog Post--&gt;</richText>
+  </textBox>
+</content>

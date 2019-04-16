@@ -1,0 +1,6 @@
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^vynal\.gb4iphone\.x10\.mx$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.vynal\.gb4iphone\.x10\.mx$
+RewriteRule ^/?$ "http\:\/\/gb4iphone\.x10\.mx\/vynal\/" [R=301,L]
+

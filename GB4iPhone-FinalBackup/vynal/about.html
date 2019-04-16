@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<script type="text/javascript" src="http://gb4iphone.x10.mx/javascript/jquery-1.4.2.min.js"></script>
+<script>
+
+    $(function() {
+      $('a').click(function() {
+        document.location = $(this).attr('href');
+        return false;
+      });
+    });
+    
+    </script>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="index,follow" name="robots" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<link href="pics/homescreen.gif" rel="apple-touch-icon" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<link href="css/style.css" rel="stylesheet" media="screen" type="text/css" />
+<script src="javascript/functions.js" type="text/javascript"></script>
+<title>(INSERT APP TITLE)</title>
+<meta content="iPod,iPhone, HTML5, (INSERT KEY WORDS HERE)" name="Keywords" />
+<meta content="<INSERT APP DISCRIPTION>" name="description" />
+</head>
+
+<body>
+
+<div id="topbar">
+	<div id="leftnav">
+		<a href="catigories.html"><img alt="home" src="images/home.png" /></a></div>
+	<div id="title">
+		About</div>
+</div>
+<div id="tributton">
+	<div class="links">
+		<a href="app.html">Home</a><a href="screenshot.html">Screenshots</a><a id="pressed">About</a></div>
+</div>
+<div id="content">
+	<span class="graytitle">Apptitle</span>
+	<ul class="pageitem">
+		<li class="textbox"><span class="header">Discription:</span><p>insert app discription here please, limit to 500 charecters</p>
+		<span class="header">Changelog:</span><p>insert changelog here, limit to 500 charecters.</p>
+		</li>
+	</ul>
+</div>
+<div id="footer">
+	<!-- Support iWebKit by sending us traffic; please keep this footer on your page, consider it a thank you for my work :-) -->
+	<a class="noeffect" href="http://snippetspace.com">iPhone site powered by iWebKit</a></div>
+
+</body>
+
+</html>

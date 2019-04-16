@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<title>Electri-city</title>
+	<meta name="keywords" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="description" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="author" content="Matthew Detmers" />
+	<link href="style.css" rel="stylesheet">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<script src="calc.js"></script>
+</head>
+
+<body>
+<br>
+
+<div class="wrapper">
+
+	<header class="header">
+		<a href=index.html><img height="150" width="800" src="logo_animated.gif" alt="ElectriCity Logo"></a>
+				<!--Insert Animated GIF of 7 Seg. Display here-->
+	</header><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<main class="content">
+<h2>Component Identification: </h2>
+<br><center>
+<img src="imgmap.png" alt="vars hehe electronics components" usemap="#Map" />
+<map name="Map" id="Map">
+    <area alt="capacitor" title="Capacitor" href="#cap" shape="rect" coords="104,137,138,206" />
+    <area alt="resistor" title="resistor" href="#res" shape="rect" coords="74,47,169,98" />
+    <area alt="ic" title="integratedc" href="#ic" shape="rect" coords="21,144,65,189" />
+    <area alt="" title="Ceramic Capacitor" href="#cercap" shape="rect" coords="19,50,61,122" />
+</map></center>
+<div class="feetStink">Click a component to read more about it</div>
+A core principal of how electronics work is due to the properties the electrons flow through.  
+The first component we will discuss is the <a href="#cap2">Capacitor</a><br><br>
+<h2>Capacitors</h2>Formerely known as condensers are electronic components with the sole purpouse
+of storing electrostatic current. As apposed to the resistor, which releases energy, usually as
+heat.  They are useful for blocking direct current(DC) while letting Alternating current (AC) to 
+pass through.  This propertey can be used for tuning radios and stabilizing power systems output.
+  Electrolytic capacitors, are polarity sensitive( pictured in the top right corner of 
+the image).  The side with the black band is the negative side.  These are called Electrolytic capacitors.
+
+
+<a href="#cap"></a>  
+<br>
+<br>
+
+<a name="capa"></a>
+<br>
+
+<h2><a name="ic"></a>Integrated Circuts</h2>
+Integrated Circuts, or IC are used to provide and easy interface for creating circuts, to make the makers life easier, similar in concept to
+the use of APIs by programmers for interfacing with common uses.  ICs are basically compressed circuts, manufactured by machines for use of 
+other circuts in smaller form.  Contained within an IC, is an extremely small circut, usually for one purpouse or application.  Common ICs
+are the LM386, a 1 Watt audio amplifer system on a chip, and the 555 Astable timer(NE555).  These IC still require some construction, in parameters
+and outputs.  They can be used to make almost all applications for simplification.  Common uses are for timers, radio recievers and transmitters, 
+or even simple gaming consoles, or computers, using the z80 or 6502 found in common game consoles of the 1980s to early 1990s.  More advanced ARM b
+based microcontrollers, and single board packages exist as well.  
+
+
+
+		</div><!-- .container-->
+
+		<aside class="left-sidebar">
+	<div id="button">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="git.html">Getting Started</a></li>
+    <li><a href="cid.html">Component Identification</a></li>
+    <li><a href="cit.html">Circuit Tutorials</a></li>
+    <li><a href="contact.html">Contact</a></li>
+	<li><a href="about.html">About</a></li>
+  </ul>
+ <br><!-- DYNAMIC DRIVE #1-->  
+<div id="POWRCALC">
+  Volts-Amps-Watts Calculator:</div>
+    <form>
+<table border=".25" align="center" cellpadding="0" cellspacing="0" style="background:#EFEFEF">
+<tr>
+<td>
+<table cellpadding="1" cellspacing="0">
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>Volts</b></font></td>
+<td align="center">
+<input size="4" name="E" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>V</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Times" size="4"><b><i>I</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="I" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>amps</b>&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>&#160;</b></font><font face="Times" size="4"><b><i>R</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="R" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>ohms &Omega;</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b></b></font><font face="Times" size="4"><b><i>P</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="P" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>watts</b></font></td>
+</tr>
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="center"><font face="Times" size="4"></font><font face="Times" size="4"><b></b>&#160;</font></td>
+<td align="center">
+<input type="button" onClick="solve(this.form);" value="calculate" style="background:#00fe00">
+</td>
+<td align="center">
+<input type="reset" onClick="clearBoxes(this.form);" value="&#160;&#160;reset&#160;&#160;" style="background:#00fe00">
+</td>
+</tr>
+<tr>
+<td colspan="3"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+<!-- DYNAMIC DRIVE #1-->
+</div>
+		</aside><!-- .left-sidebar -->
+<a name="res2"></a>
+		<aside class="right-sidebar"><h2>Resistor Color Code Chart:</h2><br><div id="ResistorChart">
+<table id="ResistorChart" style="text-align:left" align="left" width="250">
+<tr>
+<th width="20">Color</th>
+<th>Sig. Figs.</th>
+<th>Multiplier</th>
+<th colspan="2" width="100">Tolerance</th>
+</tr>
+<tr style="background-color:black; color:grey">
+<td>Black</td>
+<td>0</td>
+<td>×10<sup>0</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#964B00; color:grey">
+<td>Brown</td>
+<td>1</td>
+<td>×10<sup>1</sup></td>
+<td>±1%</td>
+</tr>
+<tr style="background-color:#FF0000; color:grey">
+<td>Red</td>
+<td>2</td>
+<td>×10<sup>2</sup></td>
+<td>±2%</td>
+</tr>
+<tr style="background-color:#FFA500">
+<td>Orange</td>
+<td>3</td>
+<td>×10<sup>3</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#FFFF00">
+<td>Yellow</td>
+<td>4</td>
+<td>×10<sup>4</sup></td>
+<td>(±5%)</td>
+</tr>
+<tr style="background-color:#9ACD32">
+<td>Green</td>
+<td>5</td>
+<td>×10<sup>5</sup></td>
+<td>±0.5%</td>
+</tr>
+<tr style="background-color:#6495ED">
+<td>Blue</td>
+<td>6</td>
+<td>×10<sup>6</sup></td>
+<td>±0.25%</td>
+</tr>
+<tr style="background-color:#EE82EE">
+<td>Violet</td>
+<td>7</td>
+<td>×10<sup>7</sup></td>
+<td>±0.1%</td>
+</tr>
+<tr style="background-color:#A0A0A0">
+<td>Gray</td>
+<td>8</td>
+<td>×10<sup>8</sup></td>
+<td>±0.05% (±10%)</td>
+</tr>
+<tr style="background-color:#FFFFFF">
+<td>White</td>
+<td>9</td>
+<td>×10<sup>9</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#CFB53B">
+<td>Gold</td>
+<td>–</td>
+<td>×10<sup>−1</sup></td>
+<td>±5%</td>
+</tr>
+<tr style="background-color:#C0C0C0">
+<td>Silver</td>
+<td>–</td>
+<td>×10<sup>−2</sup></td>
+<td>±10%</td>
+</tr>
+<tr>
+<td>None</td>
+<td>–</td>
+<td>–</td>
+<td>±20%</td>
+</tr>
+<tr>
+<td colspan="11" height="2"></td>
+</tr>
+<tr>
+<td colspan="11" style="text-align:left; font-size:0.8em">
+<ol>
+</td>
+</tr>
+</table>
+</div><a name="Res2"></a>
+Resistors can be described the component that limits flow in an electronic circuit.  The unit of mesure is in Ohms.  A 
+multimeter or using the chart above, one can determine the value of the resistor.  
+In series they can be used to lower voltage and prevent short circuits(a loop to the battery).
+Resistors are passive components that use material to add resistance to current flow.  In addition, they can be used to
+<a href="git.html#par">lower voltage levels</a> and <a href="git.html#ser">reduce curent flow.</a>  There are four color 
+bands on a resistor.  Each color represents a value measured in Ohms.  To identify the resistance value by hand, identify 
+a the first band,  on the outer edge of the resistor.  The color represents a value on the chart above.  An example is if 
+the first color is red then the first significant number is 2.  The second band represents  the second digit in the resistor. 
+For an example if the second value is orange and the first band is Red, then the resistance is 23.  The third band is a
+multiplier that determines how much the value is to be multiplied.  Our example resistor (Red-Orange-Black-Gold) would
+have a resistance of 230 Ohms.  Lastly, the tolerance of the resistor is detmerined by the fourth and final band.  It is
+typically gold, silver or not present at all.  In our example, a gold tolerance is +/-5% so 11.5+/- varriance from the stated 
+resistance.  So the range of the resistor would be 218.5 to 241.5 Ohms.  Do not forget, when designing or implementing resistors
+to take this factor in account.  Causes of this varriance is temperature, humidity
+and other atmospheric conditions.  This varriance can be reduced by soldering directly to the board instead of breadboarding
+and using temperature controlled Phase-Loop Locks.
+
+
+		</aside><!-- .right-sidebar -->
+
+	</div><!-- .middle-->
+
+</div><!-- .wrapper -->
+<br>
+<footer class="footer">
+	<br><center><a href="cit.html">Go To Next Section...</a></center>
+	<div class="feetNavi"><a href=index.html>Home</a> |<a href=cid.html>Circuits</a> | <a href=about.html>About</a> | <a href=contact.html>Questions, Comments, Concerns?</a>  </div>
+<br>
+	<div class="feetStink">Website content and design created by Matthew Detmers<br>Folsom California.  2015</div>
+</footer><!-- .footer -->
+
+</body>
+</html>
+<!-- Written in 2015 for the Web Design Final-->
+<!-- Page Designed to run on new devices and browsers using the Webkit and W3 standards.-->

@@ -1,0 +1,297 @@
+<!DOCTYPE HTML>
+<!--
+	iSpeccy: A ZX Spectrum emulator in Javascript
+	Copyright (C) 2011 Aleksey Martynov
+	
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	
+	Contact details: <newmarket@newmail.ru>
+-->
+
+<html>
+	<head>
+		<title id='mytitle'>iSpeccy. Online ZX Spectrum emulator for iOS (iPhone, iPad, iPod Touch)</title>
+		<link rel='stylesheet' href='main.css' type='text/css'>
+		<meta name='viewport' content='user-scalable=no, width=640' />
+		<meta name='apple-mobile-web-app-status-bar-style' content='black' />
+		<meta name='apple-mobile-web-app-capable' content='yes' />
+		<link rel='apple-touch-icon' href='ios_icon.png' />
+        <html manifest="/mobile_zx.manifest">
+        		
+		<script type='text/javascript' src='z80/z80_full.js'></script>
+		<script type='text/javascript' src='z80/z80_ops_full.js'></script>
+		<script type='text/javascript' src='spectrum.js'></script>
+		<script type='text/javascript' src='roms.js'></script>
+		<script type='text/javascript' src='sna.js'></script>
+		<script type='text/javascript' src='tap.js'></script>
+		<script type="text/javascript" src="snapshots.js"></script>
+		<script type='text/javascript'>/* <![CDATA[ */
+			var dump = '';
+			var tstates = 0;
+			var flashFrame = 0;
+			var running;
+			var event_next_event;
+			var pad_visible = 0;
+			function BlockMove(event)
+			{
+				event.preventDefault();
+			}
+			function addSnapshotToList(snapshot) {
+				var li = document.createElement('li');
+				var a = document.createElement('a');
+				a.appendChild(document.createTextNode(snapshot));
+				li.appendChild(a);
+				a.href = 'javascript:void(0)';
+				a.onclick = function() {
+					loadSna(snapshots[snapshot]);
+					hideSnapshotChooser();
+					start();
+				}
+				document.getElementById('snapshot_list').appendChild(li);
+			}
+			function addKeySelect(id, code, label, initial) {
+				var opt = document.createElement('option')
+				opt.appendChild(document.createTextNode(label));
+				opt.value = code;
+				if (label == initial) opt.selected = true;
+				document.getElementById(id).appendChild(opt);
+			}
+			function populateJoystickKeySelect(id, initial) {
+				document.getElementById(id).innerHTML = '';
+				addKeySelect(id, 32, 'Space', initial);
+				addKeySelect(id, 13, 'Enter', initial);
+				for (i = 48; i < 58; i++) {
+					addKeySelect(id, i, String.fromCharCode(i), initial);
+				}
+				for (i = 65; i < 91; i++) {
+					addKeySelect(id, i, String.fromCharCode(i), initial);
+				}
+			}
+			function go() {
+				hideSnapshotChooser();
+				hideAbout();
+				hideJoystickKeys();
+				populateJoystickKeySelect('select_key_up', '9');
+				populateJoystickKeySelect('select_key_down', '8');
+				populateJoystickKeySelect('select_key_left', '6');
+				populateJoystickKeySelect('select_key_right', '7');
+				populateJoystickKeySelect('select_key_fire', '0');
+				populateJoystickKeySelect('select_key_action', '9');
+				for (snapshot in snapshots) {
+					addSnapshotToList(snapshot);
+				}
+				
+				z80_init();
+				spectrum_init();
+			}
+			function frame() {
+				event_next_event = 69888;
+				tstates = 0;
+				z80_do_opcodes();
+				/* dumpScreen(); */
+				/* dumpKeys(); */
+				flashFrame = (flashFrame + 1) & 0x1f;
+				paintScreen();
+				z80_interrupt();
+			}
+			function dumpScreen() {
+				var out = '';
+				for (var i = 0x4000; i < 0x5800; i++) {
+					out += Number(memory[i]).toString(16) + ' ';
+				}
+				document.getElementById('screendump').value = out;
+			}
+			function dumpKeys() {
+				var out = '';
+				for (var i = 0; i < 8; i++) {
+					out += Number(keyStates[i]).toString(16) + ' ';
+				}
+				document.getElementById('keydump').value = out;
+			}
+			function start() {
+				if (running) return;
+				running = true;
+				document.getElementById('menu').className = 'running';
+				run();
+			}
+			function run() {
+				if (!running) return;
+				frame();
+				setTimeout(run, 20);
+			}
+			function stop() {
+				document.getElementById('menu').className = 'stopped';
+				running = false;
+			}
+			function reset() {
+				z80_reset();
+			}
+			function showSnapshotChooser() {
+				document.getElementById('snapshot_chooser').style.display = 'block';
+			}
+			function hideSnapshotChooser() {
+				document.getElementById('snapshot_chooser').style.display = 'none';
+			}
+			function showAbout() {
+				document.getElementById('about').style.display = 'block';
+			}
+			function hideAbout() {
+				document.getElementById('about').style.display = 'none';
+			}
+			function showJoystickKeys() {
+				document.getElementById('joystick_keys').style.display = 'block';
+			}
+			function hideJoystickKeys() {
+				document.getElementById('joystick_keys').style.display = 'none';
+			}
+			function showhidePad() {
+				if (pad_visible==0)
+				{
+					document.getElementById('keys_block').style.display = 'none';
+					document.getElementById('pad_block').style.display = 'block';
+					pad_visible = 1;
+				}
+				else
+				{
+					document.getElementById('pad_block').style.display = 'none';
+					document.getElementById('keys_block').style.display = 'block';
+					pad_visible = 0;				
+				}
+			}
+			function padTouch(selectId,obj) {
+				obj.style.background='#000000';
+				var select = document.getElementById(selectId);
+				var opt = select.options[select.selectedIndex];
+				registerKeyDown(opt.value);
+			}
+			function padUntouch(selectId,obj) {
+				obj.style.background='#777777';
+				var select = document.getElementById(selectId);
+				var opt = select.options[select.selectedIndex];
+				registerKeyUp(opt.value);
+			}
+			function keyTouch(code,obj) {
+				obj.style.background='#AAAAAA';
+				obj.style.color='#FFFFFF';
+				registerKeyDown(code);
+			}
+			function keyUntouch(code,obj) {
+				obj.style.background='#EEEEEE';
+				obj.style.color='#555555';
+				registerKeyUp(code);
+			}
+		/* ]]> */</script>
+	</head>
+	<body onload='go()' ontouchmove='BlockMove(event)'>
+
+	<canvas id='screen' width='256' height='192'></canvas>
+	<ul id='menu' class='stopped'>
+		<li id='menu_open'><a href='javascript:void(0)' onclick='showSnapshotChooser()' title='Load game'>Load game</a></li>
+		<li id='menu_run'><a href='javascript:void(0)' onclick='start()' title='Play'>Play</a></li>
+		<li id='menu_stop'><a href='javascript:void(0)' onclick='stop()' title='Pause'>Pause</a></li>
+		<li id='menu_reset'><a href='javascript:void(0)' onclick='reset()' title='Reset'>Reset</a></li>
+		<li id='menu_joystick'><a href='javascript:void(0)' onclick='showJoystickKeys()' title='Define keys'>Define keys</a></li>
+		<li id='menu_pad'><a href='javascript:void(0)' onclick='showhidePad()' title='Show/Hide pad'>Show/Hide pad</a></li>
+
+		<li id='menu_about'><a href='javascript:void(0)' onclick='showAbout()' title='About iSpeccy'>About iSpeccy</a></li>
+	</ul><span id='editor'></span>
+	<!-- <textarea rows='24' cols='96' id='screendump'></textarea> -->
+	<!-- <textarea id='keydump'></textarea> -->
+	<br />
+	<div id='snapshot_chooser' style='display:none;'>
+		<div id='waitwind' class='wind'>Loading...</div>
+		<h2>Load ZX Spectrum game</h2>
+		<p><ul id="snapshot_list"></ul>
+		
+		<a href='javascript:void(0)' class='close_button' onclick='hideSnapshotChooser()'>Close</a>
+	</div>
+	<div id='about' style='display:none;'>
+		<h1>iSpeccy v.2.0. 2011</h1>
+		<h2>a ZX Spectrum emulator for iOS in Javascript</h2>
+		<h2>iOS adaptation by <a href='http://axmasoft.com/en/rules.php?part=support'>Aleksey Martynov</a></h2>
+		<p>Based on <a href='http://matt.west.co.tt/category/javascript/jsspeccy/'>JSSpeccy</a> by Matt Westcott and <a href='http://fuse-emulator.sourceforge.net/'>Fuse</a> by Philip Kendall.</p>
+		<p style='font-size:9px;'>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+		<br />
+		This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.</p>
+		<a href='javascript:void(0)' class='close_button' onclick='hideAbout()'>Close</a>
+	</div>
+	<div id='joystick_keys' style='display:none;'>
+		<p align='center'><b>INTERFACE 2 / SINCLAIR default</b></p>
+		<ul>
+			<li>
+				<label for='select_key_up'>&uarr;</label>
+				<div><select id='select_key_up'>
+				</select></div>
+			</li>
+			<li>
+				<label for='select_key_down'>&darr;</label>
+				<div><select id='select_key_down'>
+				</select></div>
+			</li>
+			<li>
+				<label for='select_key_left'>&larr;</label>
+				<div><select id='select_key_left'>
+				</select></div>
+			</li>
+			<li>
+				<label for='select_key_right'>&rarr;</label>
+				<div><select id='select_key_right'>
+				</select></div>
+			</li>
+			<li>
+				<label for='select_key_fire'>A</label>
+				<div><select id='select_key_fire'>
+				</select></div>
+			</li>
+			<li>
+				<label for='select_key_fire'>B</label>
+				<div><select id='select_key_action'>
+				</select></div>
+			</li>
+		</ul>
+		<a href='javascript:void(0)' class='close_button' onclick='hideJoystickKeys()'>Close</a>
+	</div>
+
+	<div id='pad_block' class='padblock' style='display:none'>
+		<table width='100%' border='0' cellpadding='6' cellspacing='0'>
+		<tr>
+		<td width='60%' align='left' valign='middle'>
+			<input class='pad_hidden' type='button'><input class='pad_up_down' type='button' onmousedown="padTouch('select_key_up',this)" onmouseup="padUntouch('select_key_up',this)">
+			<br />
+			<input class='pad_left_right' type='button' onmousedown="padTouch('select_key_left',this)" onmouseup="padUntouch('select_key_left',this)"><input class='pad_left_right' type='button' onmousedown="padTouch('select_key_right',this)" onmouseup="padUntouch('select_key_right',this)">
+			<br />
+			<input class='pad_hidden' type='button'><input class='pad_up_down' type='button' onmousedown="padTouch('select_key_down',this)" onmouseup="padUntouch('select_key_down',this)">
+		</td>
+		<td width='20%' align='right' valign='middle'>
+			<p>&nbsp;<p>
+			<input class='pad_action' type='button' value='B' onmousedown="padTouch('select_key_action',this)" onmouseup="padUntouch('select_key_action',this)">
+		</td>
+		<td width='20%' align='right' valign='middle'>
+			<input class='pad_fire' type='button' value='A' onmousedown="padTouch('select_key_fire',this)" onmouseup="padUntouch('select_key_fire',this)">
+			<p>&nbsp;<p>
+		</td>
+		</tr>
+		</table>
+	</div>
+	<div id='keys_block' class='keysblock'>
+		<table width='100%' border='0' cellpadding='6' cellspacing='0'>
+		<tr>
+		<td width='100%' align='center' valign='middle'><input class='keys' type='button' value='1' onmousedown='keyTouch(49,this)' onmouseup='keyUntouch(49,this)'><input class='keys' type='button' value='2' onmousedown='keyTouch(50,this)' onmouseup='keyUntouch(50,this)'><input class='keys' type='button' value='3' onmousedown='keyTouch(51,this)' onmouseup='keyUntouch(51,this)'><input class='keys' type='button' value='4' onmousedown='keyTouch(52,this)' onmouseup='keyUntouch(52,this)'><input class='keys' type='button' value='5' onmousedown='keyTouch(53,this)' onmouseup='keyUntouch(53,this)'><input class='keys' type='button' value='6' onmousedown='keyTouch(54,this)' onmouseup='keyUntouch(54,this)'><input class='keys' type='button' value='7' onmousedown='keyTouch(55,this)' onmouseup='keyUntouch(55,this)'><input class='keys' type='button' value='8' onmousedown='keyTouch(56,this)' onmouseup='keyUntouch(56,this)'><input class='keys' type='button' value='9' onmousedown='keyTouch(57,this)' onmouseup='keyUntouch(57,this)'><input class='keys' type='button' value='0' onmousedown='keyTouch(48,this)' onmouseup='keyUntouch(48,this)'><br /><input class='keys' type='button' value='Q' onmousedown='keyTouch(81,this)' onmouseup='keyUntouch(81,this)'><input class='keys' type='button' value='W' onmousedown='keyTouch(87,this)' onmouseup='keyUntouch(87,this)'><input class='keys' type='button' value='E' onmousedown='keyTouch(69,this)' onmouseup='keyUntouch(69,this)'><input class='keys' type='button' value='R' onmousedown='keyTouch(82,this)' onmouseup='keyUntouch(82,this)'><input class='keys' type='button' value='T' onmousedown='keyTouch(84,this)' onmouseup='keyUntouch(84,this)'><input class='keys' type='button' value='Y' onmousedown='keyTouch(89,this)' onmouseup='keyUntouch(89,this)'><input class='keys' type='button' value='U' onmousedown='keyTouch(85,this)' onmouseup='keyUntouch(85,this)'><input class='keys' type='button' value='I' onmousedown='keyTouch(73,this)' onmouseup='keyUntouch(73,this)'><input class='keys' type='button' value='O' onmousedown='keyTouch(79,this)' onmouseup='keyUntouch(79,this)'><input class='keys' type='button' value='P' onmousedown='keyTouch(80,this)' onmouseup='keyUntouch(80,this)'><br /><input class='keys' type='button' value='A' onmousedown='keyTouch(65,this)' onmouseup='keyUntouch(65,this)'><input class='keys' type='button' value='S' onmousedown='keyTouch(83,this)' onmouseup='keyUntouch(83,this)'><input class='keys' type='button' value='D' onmousedown='keyTouch(68,this)' onmouseup='keyUntouch(68,this)'><input class='keys' type='button' value='F' onmousedown='keyTouch(70,this)' onmouseup='keyUntouch(70,this)'><input class='keys' type='button' value='G' onmousedown='keyTouch(71,this)' onmouseup='keyUntouch(71,this)'><input class='keys' type='button' value='H' onmousedown='keyTouch(72,this)' onmouseup='keyUntouch(72,this)'><input class='keys' type='button' value='J' onmousedown='keyTouch(74,this)' onmouseup='keyUntouch(74,this)'><input class='keys' type='button' value='K' onmousedown='keyTouch(75,this)' onmouseup='keyUntouch(75,this)'><input class='keys' type='button' value='L' onmousedown='keyTouch(76,this)' onmouseup='keyUntouch(76,this)'><input class='keys' type='button' value='ENT' onmousedown='keyTouch(13,this)' onmouseup='keyUntouch(13,this)'><br /><input class='keys' type='button' value='CAP' onmousedown='keyTouch(16,this)' onmouseup='keyUntouch(16,this)'><input class='keys' type='button' value='Z' onmousedown='keyTouch(90,this)' onmouseup='keyUntouch(90,this)'><input class='keys' type='button' value='X' onmousedown='keyTouch(88,this)' onmouseup='keyUntouch(88,this)'><input class='keys' type='button' value='C' onmousedown='keyTouch(67,this)' onmouseup='keyUntouch(67,this)'><input class='keys' type='button' value='V' onmousedown='keyTouch(86,this)' onmouseup='keyUntouch(86,this)'><input class='keys' type='button' value='B' onmousedown='keyTouch(66,this)' onmouseup='keyUntouch(66,this)'><input class='keys' type='button' value='N' onmousedown='keyTouch(78,this)' onmouseup='keyUntouch(78,this)'><input class='keys' type='button' value='M' onmousedown='keyTouch(77,this)' onmouseup='keyUntouch(77,this)'><input class='keys' type='button' value='SYM' onmousedown='keyTouch(17,this)' onmouseup='keyUntouch(17,this)'><input class='keys' type='button' value='DEL' onmousedown='keyTouch(16,this);keyTouch(48,this)' onmouseup='keyUntouch(48,this);keyUntouch(16,this)'><br /><input class='keys' style='width:99%' type='button' value='Break / Space' onmousedown='keyTouch(32,this)' onmouseup='keyUntouch(32,this)'></td>
+		</tr>
+		</table>
+	</div>
+
+	<iframe name='commandframe' id='commandframe' src='about:blank' frameborder='0' scrolling='no' width='0' height='0'></iframe>
+</body>
+</html>

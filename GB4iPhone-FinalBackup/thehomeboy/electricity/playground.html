@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<title>Electri-city</title>
+	<meta name="keywords" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="description" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="author" content="Matthew Detmers" />
+	<link href="style.css" rel="stylesheet">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<script src="calc.js"></script>
+</head>
+
+<body>
+<br>
+
+<div class="wrapper">
+
+	<!--<header class="header">
+		<!--<a href=index.html><img height="150" width="800" src="logo_animated.gif" alt="ElectriCity Logo"></a>-->
+				<!--Insert Animated GIF of 7 Seg. Display here-->
+	</header><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<main class="content">
+		</div><!-- .container-->
+
+		<aside class="left-sidebar">
+<!--	<div id="button">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="git.html">Getting Started</a></li>
+    <li><a href="cid.html">Component Identification</a></li>
+    <li><a href="cit.html">Circuit Tutorials</a></li>
+    <li><a href="contact.html">Contact</a></li>
+	<li><a href="about.html">About</a></li>
+  </ul> -->
+ <br><!-- DYNAMIC DRIVE #1-->  
+<div id="POWRCALC">
+  Volts-Amps-Watts Calculator:</div>
+    <form>
+<table border=".25" align="center" cellpadding="0" cellspacing="0" style="background:#EFEFEF">
+<tr>
+<td>
+<table cellpadding="1" cellspacing="0">
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>Volts</b></font></td>
+<td align="center">
+<input size="4" name="E" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>V</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Times" size="4"><b><i>I</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="I" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>amps</b>&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>&#160;</b></font><font face="Times" size="4"><b><i>R</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="R" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>ohms &Omega;</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b></b></font><font face="Times" size="4"><b><i>P</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="P" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>watts</b></font></td>
+</tr>
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="center"><font face="Times" size="4"></font><font face="Times" size="4"><b></b>&#160;</font></td>
+<td align="center">
+<input type="button" onClick="solve(this.form);" value="calculate" style="background:#00fe00">
+</td>
+<td align="center">
+<input type="reset" onClick="clearBoxes(this.form);" value="&#160;&#160;reset&#160;&#160;" style="background:#00fe00">
+</td>
+</tr>
+<tr>
+<td colspan="3"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+<!-- DYNAMIC DRIVE #1-->
+</div>
+		</aside><!-- .left-sidebar -->
+
+		<aside class="right-sidebar"><!--Resistor Color Code Chart:<br><div id="ResistorChart">
+<table id="ResistorChart" style="text-align:left" align="left" width="250">
+<tr>
+<th width="20">Color</th>
+<th>Sig. Figs.</th>
+<th>Multiplier</th>
+<th colspan="2" width="100">Tolerance</th>
+</tr>
+<tr style="background-color:black; color:grey">
+<td>Black</td>
+<td>0</td>
+<td>×10<sup>0</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#964B00; color:grey">
+<td>Brown</td>
+<td>1</td>
+<td>×10<sup>1</sup></td>
+<td>±1%</td>
+</tr>
+<tr style="background-color:#FF0000; color:grey">
+<td>Red</td>
+<td>2</td>
+<td>×10<sup>2</sup></td>
+<td>±2%</td>
+</tr>
+<tr style="background-color:#FFA500">
+<td>Orange</td>
+<td>3</td>
+<td>×10<sup>3</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#FFFF00">
+<td>Yellow</td>
+<td>4</td>
+<td>×10<sup>4</sup></td>
+<td>(±5%)</td>
+</tr>
+<tr style="background-color:#9ACD32">
+<td>Green</td>
+<td>5</td>
+<td>×10<sup>5</sup></td>
+<td>±0.5%</td>
+</tr>
+<tr style="background-color:#6495ED">
+<td>Blue</td>
+<td>6</td>
+<td>×10<sup>6</sup></td>
+<td>±0.25%</td>
+</tr>
+<tr style="background-color:#EE82EE">
+<td>Violet</td>
+<td>7</td>
+<td>×10<sup>7</sup></td>
+<td>±0.1%</td>
+</tr>
+<tr style="background-color:#A0A0A0">
+<td>Gray</td>
+<td>8</td>
+<td>×10<sup>8</sup></td>
+<td>±0.05% (±10%)</td>
+</tr>
+<tr style="background-color:#FFFFFF">
+<td>White</td>
+<td>9</td>
+<td>×10<sup>9</sup></td>
+<td colspan="2">–</td>
+</tr>
+<tr style="background-color:#CFB53B">
+<td>Gold</td>
+<td>–</td>
+<td>×10<sup>−1</sup></td>
+<td>±5%</td>
+</tr>
+<tr style="background-color:#C0C0C0">
+<td>Silver</td>
+<td>–</td>
+<td>×10<sup>−2</sup></td>
+<td>±10%</td>
+</tr>
+<tr>
+<td>None</td>
+<td>–</td>
+<td>–</td>
+<td>±20%</td>
+</tr>
+<tr>
+<td colspan="11" height="2"></td>
+</tr>
+<tr>
+<td colspan="11" style="text-align:left; font-size:0.8em">
+<ol>
+</td>
+</tr>
+</table>
+</div>-->
+
+		</aside><!-- .right-sidebar -->
+
+	</div><!-- .middle-->
+
+</div><!-- .wrapper -->
+<br>
+<footer class="footer"><!--
+	<br><center><a href="cit.html">Go To Next Section...</a></center>
+	<div class="feetNavi"><a href=index.html>Home</a> |<a href=cid.html>Circuits</a> | <a href=about.html>About</a> | <a href=contact.html>Questions, Comments, Concerns?</a>  </div>
+<br>
+	<div class="feetStink">Website content and design created by Matthew Detmers<br>Folsom California.  2015</div>-->
+</footer><!-- .footer -->
+
+</body>
+</html>
+<!-- Written in 2015 for the Web Design Final-->
+<!-- Page Designed to run on new devices and browsers using the Webkit and W3 standards.-->

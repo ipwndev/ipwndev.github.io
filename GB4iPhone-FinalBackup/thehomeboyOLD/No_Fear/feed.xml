@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <id>urn:iweb:2A0B8F09-A1CF-4407-A0C3-BEA6EF6D09C3</id>
+ <title>Page list Atom feed</title>
+ <updated>2013-11-13T21:31:59-08:00</updated>
+ <link rel="self" href="feed.xml"/>
+ <generator>iWeb</generator>
+ <author>
+  <name>iWeb</name>
+ </author>
+ <entry>
+  <id>urn:iweb:C7DE9782-A3D1-4FF7-9DFA-A82ADDA48F18</id>
+  <title>Main</title>
+  <title xmlns="urn:iweb:">Main</title>
+  <in-navbar xmlns="urn:iweb:">C7DE9782-A3D1-4FF7-9DFA-A82ADDA48F18</in-navbar>
+  <link rel="alternate" href="Main.html"/>
+  <updated>2013-11-13T21:31:59.001-08:00</updated>
+  <content>Main</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:E1972141-1EBE-4ED2-A9DB-94EE11B27352</id>
+  <title>not a blog</title>
+  <title xmlns="urn:iweb:">not a blog</title>
+  <in-navbar xmlns="urn:iweb:">E1972141-1EBE-4ED2-A9DB-94EE11B27352</in-navbar>
+  <link rel="alternate" href="not_a_blog/not_a_blog.html"/>
+  <updated>2007-03-01T09:29:51-08:00</updated>
+  <content>not a blog</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:212906C8-0096-4A7A-9CC2-9B28FE7861A3</id>
+  <title>About</title>
+  <title xmlns="urn:iweb:">About</title>
+  <in-navbar xmlns="urn:iweb:">212906C8-0096-4A7A-9CC2-9B28FE7861A3</in-navbar>
+  <link rel="alternate" href="About.html"/>
+  <updated>2013-11-13T21:31:59.002-08:00</updated>
+  <content>About</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:C08702D4-39BA-4DA2-9F50-5AC7E5268D41</id>
+  <title>cool stuff/projects</title>
+  <title xmlns="urn:iweb:">cool stuff/projects</title>
+  <in-navbar xmlns="urn:iweb:">C08702D4-39BA-4DA2-9F50-5AC7E5268D41</in-navbar>
+  <link rel="alternate" href="cool_stuff_projects.html"/>
+  <updated>2013-11-13T21:31:59.003-08:00</updated>
+  <content>cool stuff/projects</content>
+ </entry>
+</feed>

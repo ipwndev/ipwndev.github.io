@@ -1,0 +1,394 @@
+/*Stylesheet by Matthew Detmers */
+/*Written in 2015 for Web Design at Folsom High School...cough cough... by hand, in notepad(technically pico, but nano since i am on BSD unix) */
+/*For the greatest website... IN THE WORLD- that was a joke... */
+/* I wonder if anyone will ever end up reading this */
+/* Proudly not designed in Dreamweaver */
+					/*todo:  */
+		/* fix IE compatibility(KINDA Done regarding IE 8)-DONE SORT OF */
+		/* get pictures-DONE */
+		/* add content-WIP */
+		/* 3 adobe flashes- 3/3 DONE */
+/*begin actual CSS*/
+
+
+
+.Fear { display: none; }
+
+
+
+/*no fear.  not now, not ever */
+/*also, i lied about starting the CSS, it starts now */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	color:White;
+	font-family:Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+html {
+	height: 100%;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+	display: block;
+}
+body {
+/*	font: 12px/18px c */
+	color:White;
+	font-family:Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	width:800px;
+	height:650px;
+	background: rgb(76,76,76); /* fallback for Old(er) browsers */
+	background-image: -moz-radial-gradient(center, ellipse cover, rgba(76,76,76,1) 0%, rgba(89,89,89,1) 0%, rgba(17,17,17,1) 100%); /* FF3.6+ */
+	background-image: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(76,76,76,1)), color-stop(0%,rgba(89,89,89,1)), color-stop(100%,rgba(17,17,17,1))); /* Chrome,Safari4+ */
+	background-image: -webkit-radial-gradient(center, ellipse cover, rgba(76,76,76,1) 0%,rgba(89,89,89,1) 0%,rgba(17,17,17,1) 100%); /* Chrome10+,Safari5.1+ */
+	background-image: -o-radial-gradient(center, ellipse cover, rgba(76,76,76,1) 0%,rgba(89,89,89,1) 0%,rgba(17,17,17,1) 100%); /* Opera 12+ */
+	background-image: -ms-radial-gradient(center, ellipse cover, rgba(76,76,76,1) 0%,rgba(89,89,89,1) 0%,rgba(17,17,17,1) 100%); /* IE10+ */
+	background-image: radial-gradient(ellipse at center, rgba(76,76,76,1) 0%,rgba(89,89,89,1) 0%,rgba(17,17,17,1) 100%); /* W3C */
+/*	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#111111',GradientType=1 ); /* IE6-9 fallback on horizontal gradient:  DO NOT USE, it looks real-bad.  TODO fix this. */ 
+        margin-left:auto;
+        margin-right:auto; */
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+.wrapper {
+	width: 800px;
+	margin: 0 auto;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+}
+
+
+/* Header for the title bar with the .gif logo
+-----------------------------------------------------------------------------*/
+.header {
+	height: 150px;
+	background: #4C4C4C;
+}
+
+
+/* Middle display bit
+-----------------------------------------------------------------------------*/
+.middle {
+	width: 100%;
+	padding: 0 0 95px;
+	position: relative;
+}
+.middle:after {
+	display: table;
+	clear: both;
+	content: '';
+}
+.container {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+
+}
+.content {
+	padding: 0 255px 0 180px;
+}
+/* widecontent CONTENT WIDE VIEW,IT IS STUCK IN CAPS LOCK WHOHO!
+-----------------------------------------------------------------------------*/
+.widecontent {
+	width: 625;
+	position: relative;
+	overflow: hidden;
+}
+
+
+/* Left Sidebar
+-----------------------------------------------------------------------------*/
+.left-sidebar {
+	float: left;
+	width: 175px;
+	margin-left: -100%;
+	position: relative;
+	/*background: #B5E3FF;	used for spacing purpouses*/
+	border-style: groove;
+	border-color: grey;
+    border-width: .00px;
+}
+
+
+/* Right Sidebar
+-----------------------------------------------------------------------------*/
+.right-sidebar {
+	float: left;
+	width: 250px;
+	margin-left: -250px;
+	position: relative;
+	/*background: #FFACAA;*/
+}
+
+
+/* Footer for bottom links
+-----------------------------------------------------------------------------*/
+.footer {
+	width: 800px;
+	margin: -100px auto 0;
+	height: 100px;
+	/*
+	USED FOR MAPPING SPACE 
+	background: #BFF08E;*/
+	position: relative;
+}
+.feetStink {
+		font: 9px Comic Sans MS;
+	    color:White;
+	    text-align: center;
+}
+.feetNavi {
+		font: 18px 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace;
+	    color:White;
+	    text-align: center;
+}
+/* Links of the leftbar varietey */
+a:link {
+    text-decoration: none;
+    color:#00FF00;  
+}
+
+a:visited {
+    text-decoration: none;
+/* color: "#00FF00";   */
+}
+a:hover {
+    text-decoration: underline;
+    color:#00FF00;
+}
+a:active {
+    text-decoration: underline;
+    color:#00FF00;
+}
+/*a button, but not THE button */
+/* shaving thish for later...   00fe00   */
+#button {
+	width: 200;
+	border-right: 1px solid #000;
+	padding: 0 0 1em 0;
+	margin-bottom: 1em;
+	font-family: 'Trebuchet MS', 'Lucida Grande', Verdana, Arial, sans-serif;
+	background-color: #00fe00;/* alt to #90bade*/; 
+	color:#233616;  /*#333;*/
+}
+
+#button ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+	
+#button li {
+	border-bottom: 1px solid #90bade; /*alt to #90bade or 00fe00 */
+	margin: 0;
+	list-style: none;
+	list-style-image: none;
+}
+	
+#button li a {
+	display: block;
+	padding: 5px 5px 5px 0.5em;
+	border-left: 10px solid #00D400; /*alt to #1958b7*/
+	border-right: 10px solid #62FC62; /*alt to 508fc4*/
+	background-color: 00fe00;   /*main button color goes here alt to: #2175bc*/
+	color:  #000; /*alt to #fff */
+	text-decoration: none;
+	width: 100%;
+}
+
+html>body #button li a {
+	width: auto;
+}
+
+#button li a:hover {
+	border-left: 10px solid #FF0000; /* #1c64d1 alt color */
+	border-right: 10px solid #0FD60F;  /* alt to 5ba3e0 */
+	background-color: #00fe00;    /*alt to:#2586d7 */
+	color: /* fff;*/ #000;
+}
+textarea {
+   resize: none;
+}
+/*LAWS FOR THE TEXT FORMATTING*/
+#header {
+	font-size:18px;
+	color:White;
+	font-family:Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+#userContent {
+	font-size:13px;
+	color:White;
+	font-family:Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+#AdText {
+	font-size:10px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: center; 
+}
+#AdvText {
+	font-size:10px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: right;
+	float: left; 
+}
+#rightadtext {
+	font-size:10px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: center;
+	float: center; 
+}
+#largeAdvertisment {
+	font-size:10px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: right;
+	float: right; 
+}
+#subsanddubs {
+	font-size:10px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: center;
+	float: center; 
+}
+#ResistorChart {
+	font-size:12px;
+	color:Grey;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: center; 
+}
+#POWRCALC {
+	font-size:12px;
+	color:black;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+	text-align: center; 
+}
+#cenTitle {
+	text-align: right;
+	float: center;
+	font-size:19px;
+}
+/* color pallet:
+todo saving this for later use...
+
+1AFF00
+84CB7C
+309C24
+A3FF98
+020F00  
+
+IN RETROSPECT i DONT THINK I USED THESE, OH WELL
+
+*/
+/*dude try to highlight text on the page, notice anything... the highlight color is GREEN not the standard blue hahah*/
+::selection {
+  background: #00FF00; /* WebKit/Blink Browsers, safari, chrome, opera */
+}
+::-moz-selection {
+  background: #00FF00; /* Gecko Browsers, firefox */
+}
+a:visited {
+		color:#00FF00;
+		text-decoration:none;
+
+} 
+#finegreentext {
+		color:"#00FF00";
+		text-decoration:none;
+}
+/* WideMiddle - lol i diddent even use it, no sense in deleting it tho as it works kinda
+-----------------------------------------------------------------------------*/
+.middleWide {
+	width: 100%;
+	position: relative;
+}
+.middleWide:after {
+	display: table;
+	clear: both;
+	content: '';
+}
+.containerWide {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+.contentWide {
+	padding: 0 0 0 270px;
+}
+/*this is for the button regarding the scroll up to top on the side of the page thing */\
+
+
+.cd-top.cd-is-visible {
+  /* the button becomes visible */
+  visibility: visible;
+  opacity: 1;
+}
+.cd-top.cd-fade-out {
+  /* if the user keeps scrolling down, the button is out of focus and becomes less visible */
+  opacity: .5;
+}
+//highlight named anchor when selected
+#ser:target {
+    background-color: #ffa;
+}
+#ser {
+    width: 75%;
+    margin: 0 auto;
+    -webkit-transition: all 1s linear;
+}
+h2 {
+	font-size:18px;
+	color:White;
+	font-family: Helvetica, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+/* notice as how time went on, my work got lazier */
+/* formatting was lost, and it started looking worse and worse */
+/* oh well... It works */
+/*  it litteraly doesnt matter... Enjoy */
+/* this stylesheet can be used by anyone, just cite me for the base stylesheet and I will be happy.  Actually, i dont care.  Use it, change it, destroy it, copy it. */

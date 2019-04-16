@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<title>Electri-city</title>
+	<meta name="keywords" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="description" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="author" content="Matthew Detmers" />
+	<link href="style.css" rel="stylesheet">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<script src="calc.js"></script>
+</head>
+
+<body>
+<br>
+
+<div class="wrapper">
+
+	<header class="header">
+		<a href=index.html><img height="150" width="800" src="logo_animated.gif" alt="ElectriCity Logo"></a>
+				<!--Insert Animated GIF of 7 Seg. Display here-->
+	</header><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<main class="content">
+			<div class="userContent">
+				<p>Electri-city is a website regarding the design, construction, and experimenting with electrical circuits. These
+				electrical circuits are designed to be easy to build, and hopefully have a practical use.  In addition it serves
+				to make the lives of engineers, physics students, and hobbyists lives easier by providing a singular resource
+				regarding the construction of electronics circuits. </p><br>
+				<p>
+				This site was designed, primarily by hand in the text editor nano on a Darwin based unix derivative. Outside libraries or "Dynamic Drives" are sourced below.  This site is designed to run on the W3's HTML 5 
+				Specification.  it lacks compatibility with Internet Explorer 9 and under.  It has been tested and works on Googles Chrome 41+, FireFox 3+, Apples Safari on 10.6.8+, and Internet 
+				Explorer 10+.  The reason for not supporting older versions of internet explorer is due to the security risk.  Microsoft has stopped supporting older versions of internet explorer in
+				favor of newer browsers.  The old versions are still open to numerous exploits and hacks.  Even if you are running an older computer, Firefox and Chrome both work on older windows XP 
+				machines.</p>  
+				</div>
+				</div><!-- .container-->
+
+		<aside class="left-sidebar">
+	<div id="button">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="git.html">Getting Started</a></li>
+    <li><a href="cid.html">Component Identification</a></li>
+    <li><a href="cit.html">Circuit Tutorials</a></li>
+    <li><a href="contact.html">Contact</a></li>
+	<li><a href="about.html">About</a></li>
+  </ul>
+ <br><!-- DYNAMIC DRIVE #1-->  
+<div id="POWRCALC">
+  Volts-Amps-Watts Calculator:</div>
+    <form>
+<table border=".25" align="center" cellpadding="0" cellspacing="0" style="background:#EFEFEF">
+<tr>
+<td>
+<table cellpadding="1" cellspacing="0">
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>Volts</b></font></td>
+<td align="center">
+<input size="4" name="E" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>V</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Times" size="4"><b><i>I</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="I" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>amps</b>&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>&#160;</b></font><font face="Times" size="4"><b><i>R</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="R" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>ohms &Omega;</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b></b></font><font face="Times" size="4"><b><i>P</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="P" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>watts</b></font></td>
+</tr>
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="center"><font face="Times" size="4"></font><font face="Times" size="4"><b></b>&#160;</font></td>
+<td align="center">
+<input type="button" onClick="solve(this.form);" value="calculate" style="background:#00fe00">
+</td>
+<td align="center">
+<input type="reset" onClick="clearBoxes(this.form);" value="&#160;&#160;reset&#160;&#160;" style="background:#00fe00">
+</td>
+</tr>
+<tr>
+<td colspan="3"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+<!-- DYNAMIC DRIVE #1-->
+</div>
+		</aside><!-- .left-sidebar -->
+
+		<aside class="right-sidebar">
+			<iframe align="right" padding="0" alt="Advertisment Content goes here" width="220px" height="109px" src="https://lh3.ggpht.com/FsdkJrpXJ8dOCOH2hD2wgom3zXC_YcUwURpdO0dM87sdmJDqhGT5Yc1aXlrzvU_XvFe6yAPF=w180"></iframe>
+			<div id="rightadtext">Sponsored Content</div>
+		</aside><!-- .right-sidebar -->
+
+	</div><!-- .middle-->
+
+</div><!-- .wrapper -->
+<br>
+<footer class="footer">
+	<div class="feetNavi"><a href=index.html>Home</a> |<a href=cid.html>Circuits</a> | <a href=about.html>About</a> | <a href=contact.html>Questions, Comments, Concerns?</a>  </div>
+<br>
+	<div class="feetStink">Website content and design created by Matthew Detmers<br>Folsom California.  2015</div>
+</footer><!-- .footer -->
+
+</body>
+</html>
+<!-- Written in 2015 for the Web Design Final-->
+<!-- Page Designed to run on new devices and browsers using the Webkit and W3 standards.-->

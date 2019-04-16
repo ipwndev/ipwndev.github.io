@@ -1,0 +1,7 @@
+
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^blog\.gb4iphone\.x10\.mx$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.blog\.gb4iphone\.x10\.mx$
+RewriteRule ^/?$ "http\:\/\/ipwndeveloper\.wordpress\.com\/" [R=301,L]
+

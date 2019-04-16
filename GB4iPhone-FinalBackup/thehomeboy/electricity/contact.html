@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<title>Electri-city</title>
+	<meta name="keywords" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="description" content="Contains How to material and other useful source material for creating and building Electronics and Circitry" />
+	<meta name="author" content="Matthew Detmers" />
+	<link href="style.css" rel="stylesheet">
+	<script src="calc.js"></script>
+	<script>
+	$(document).ready(function () {
+    $('#discard').click(function (event) {
+        location.reload(true);
+    });
+});
+</script>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+<br>
+
+<div class="wrapper">
+
+	<header class="header">
+		<a href=index.html><img height="150" width="800" src="logo_animated.gif" alt="ElectriCity Logo"></a>
+				<!--Insert Animated GIF of 7 Seg. Display here-->
+	</header><!-- .header-->
+
+	<div class="middle">
+
+		<div class="container">
+			<main class="content">
+			<div id="cenTitle">&nbspQuestions, Comments, or Concerns?</div><br>If you have any please feel free to submit an inquiry and a team of trained parrots will respond within a short time.</strong>
+				<br><br><form>
+					Name:<br>
+						<input type="text" name="name">
+							<br>
+					Email:<br>
+						<input type="text" name="email">
+						<br>
+						<br>
+				What is the reason for contacting?
+				<br>
+
+			<input type="radio" name="type" value="Question" checked>Question
+				
+			<input type="radio" name="type" value="Comment">Comment
+				
+			<input type="radio" name="type" value="Concern">Concern
+				<br><br>
+				Please keep all input shorter than 500 characters.
+				 <br>
+				<textarea name="message" rows="10" cols="38" max="501"></textarea>
+				<br>
+				
+			&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="submit" value="Submit">&nbsp<input formtarget="__self" type="reset" value="Reset">&nbsp <!--<input type="button" name="discard" id="discard" value="Discard"/>-->
+			</form>
+		</div><!-- .container-->
+
+		<aside class="left-sidebar">
+	<div id="button">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="git.html">Getting Started</a></li>
+    <li><a href="cid.html">Component Identification</a></li>
+    <li><a href="cit.html">Circuit Tutorials</a></li>
+    <li><a href="contact.html">Contact</a></li>
+	<li><a href="about.html">About</a></li>
+  </ul>
+ <br><!-- DYNAMIC DRIVE #1-->  
+<div id="POWRCALC">
+  Volts-Amps-Watts Calculator:</div>
+    <form>
+<table border=".25" align="center" cellpadding="0" cellspacing="0" style="background:#EFEFEF">
+<tr>
+<td>
+<table cellpadding="1" cellspacing="0">
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>Volts</b></font></td>
+<td align="center">
+<input size="4" name="E" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>V</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Times" size="4"><b><i>I</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="I" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>amps</b>&#160;</font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b>&#160;</b></font><font face="Times" size="4"><b><i>R</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="R" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>ohms &Omega;</b></font></td>
+</tr>
+<tr>
+<td align="right"><font face="Arial"><b></b></font><font face="Times" size="4"><b><i>P</i></b>&#160;</font></td>
+<td align="center">
+<input size="4" name="P" value="" style="background:#FFFFFF">
+</td>
+<td><font face="Arial"><b>watts</b></font></td>
+</tr>
+<tr>
+<td colspan="2"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+<tr>
+<td align="center"><font face="Times" size="4"></font><font face="Times" size="4"><b></b>&#160;</font></td>
+<td align="center">
+<input type="button" onClick="solve(this.form);" value="calculate" style="background:#00fe00">
+</td>
+<td align="center">
+<input type="reset" onClick="clearBoxes(this.form);" value="&#160;&#160;reset&#160;&#160;" style="background:#00fe00">
+</td>
+</tr>
+<tr>
+<td colspan="3"><font size="1" face="Arial">&#160;</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+<!-- DYNAMIC DRIVE #1-->
+</div>
+		</aside><!-- .left-sidebar -->
+
+		<aside class="right-sidebar">
+		<br>
+		<br>
+			Please Check every other checkbox to prove you are a human and not spamming.<br>
+			<center><input type="checkbox" name="spam" value="no"><input type="checkbox" name="spam" value="yes"><input type="checkbox" name="spam" value="no"><input type="checkbox" name="spam" value="yes"><input type="checkbox" name="spam" value="no"></center>
+<br>
+Please Pick your state:
+<br>
+			<select>
+	<option value="AL">Alabama</option>
+	<option value="AK">Alaska</option>
+	<option value="AZ">Arizona</option>
+	<option value="AR">Arkansas</option>
+	<option value="CA">California</option>
+	<option value="CO">Colorado</option>
+	<option value="CT">Connecticut</option>
+	<option value="DE">Delaware</option>
+	<option value="DC">District Of Columbia</option>
+	<option value="FL">Florida</option>
+	<option value="GA">Georgia</option>
+	<option value="HI">Hawaii</option>
+	<option value="ID">Idaho</option>
+	<option value="IL">Illinois</option>
+	<option value="IN">Indiana</option>
+	<option value="IA">Iowa</option>
+	<option value="KS">Kansas</option>
+	<option value="KY">Kentucky</option>
+	<option value="LA">Louisiana</option>
+	<option value="ME">Maine</option>
+	<option value="MD">Maryland</option>
+	<option value="MA">Massachusetts</option>
+	<option value="MI">Michigan</option>
+	<option value="MN">Minnesota</option>
+	<option value="MS">Mississippi</option>
+	<option value="MO">Missouri</option>
+	<option value="MT">Montana</option>
+	<option value="NE">Nebraska</option>
+	<option value="NV">Nevada</option>
+	<option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option>
+	<option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option>
+	<option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option>
+	<option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option>
+	<option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option>
+	<option value="WY">Wyoming</option>
+</select>	
+<br><br>
+Please Pick the Month:
+<br>	
+<select>
+	<option value="AL">January</option>
+	<option value="AK">Feburary</option>
+	<option value="AZ">March</option>
+	<option value="AR">April</option>
+	<option value="CA">May</option>
+	<option value="CO">June</option>
+	<option value="CT">July</option>
+	<option value="DE">Agust</option>
+	<option value="DC">September</option>
+	<option value="FL">October</option>
+	<option value="GA">November</option>
+	<option value="HI">December</option>
+</select>	
+<br>
+<br>How did you get to my site:
+<br>
+			<input type="radio" name="type" value="Question" checked>In the <a href="about:blank">I:/Drive</a>
+				<br>
+			<input type="radio" name="type" value="Comment">In the <a href="about:blank">G:/ Drive</a>
+				<br>
+			<input type="radio" name="type" value="Concern">On <a href="http://matthewserver.local">Matthewsserver</a>
+				<br>
+<br>Which Social Media Sites do you use?
+<br>
+<input type="checkbox" name="socialfb" value="fb"> Facebook<br>
+<input type="checkbox" name="socialtw" value="tw"> Twitter<br>
+<input type="checkbox" name="socialGP" value="gp"><!--*gasp*--> Google Plus<br>
+<input type="checkbox" name="socialRT" value="rt"> Reddit<br>
+
+
+			
+		</aside><!-- .right-sidebar -->
+
+	</div><!-- .middle-->
+
+</div><!-- .wrapper -->
+<br>
+<footer class="footer">
+	<div class="feetNavi"><a href=index.html>Home</a> |<a href=cid.html>Circuits</a> | <a href=about.html>About</a> | <a href=contact.html>Questions, Comments, Concerns?</a>  </div>
+<br>
+	<div class="feetStink">Website content and design created by Matthew Detmers<br>Folsom California.  2015</div>
+</footer><!-- .footer -->
+
+</body>
+</html>
+<!-- Written in 2015 for the Web Design Final-->
+<!-- Page Designed to run on new devices and browsers using the Webkit and W3 standards.-->

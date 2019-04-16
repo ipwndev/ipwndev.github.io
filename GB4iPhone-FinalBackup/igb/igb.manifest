@@ -1,0 +1,46 @@
+CACHE MANIFEST
+ 
+# Offline cache v4
+
+# html files
+index.htm
+index.html
+about.htm
+credits.htm
+
+
+ 
+# css files
+/jsgb.styles.css
+ 
+# js files
+/jgsb.cpu.js
+/jsgb.debugger.js
+/jsgb.gameboy.js
+/jsgb.interrupts.js
+/jsgb.lcd.js
+/jsgb.memory.js
+/jsgb.rom.js
+/jsgb.timers.js
+
+ 
+# images
+/pics/
+/controls.png
+
+# GB files
+/roms/20y.gb
+/roms/Bc.gb
+/roms/BOXING.gb
+/roms/GBLANDER.gb
+/roms/GBTICTAC.gb
+/roms/Ls.gb
+/roms/mc-murder.gb
+/roms/minesweeper.gb
+/roms/wario_walking.gb
+
+
+#txt files
+
+/roms/wario_walking.gb
+

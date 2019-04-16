@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>
+Page Not Found
+</title
+</head>
+<body>
+Whoops,  Looks like you've stumbled across a bad link!  A team of highly trained parrots have been dispatched to solve this issue, and the error has been reported.<br>
+Have a nice day.
+<br>
+<center><img src="http://www.quickmeme.com/img/ea/ea140802061731474a1e3f6aec1c87fb42b3aced7f3c2f4e592bff3547d7847b.jpg"></center>
+<br>
+<br>
+<br>
+If You Can't Find It here, Try a Mirror and Time Machine:
+<br>
+<div id="wb404"/>
+<script src="https://archive.org/web/wb404.js"> </script>
+<br>
+<a href="https://archive.org/">Search For Lost/Missing Pages</a>
+Also, If you wish to report the file(s) missing, be sure to include the information below:
+<br>
+<h6>Client IP Address:</h6>
+
+<h6>HTTP Referrer:</h6>
+
+<!--#echo var="HTTP_REFERER" -->
+
+<h6>Remote ADDRESS:</h6>
+
+<!--#echo var="REMOTE_ADDR" -->
+
+<h6>Requested URL:</h6>
+
+<!--#echo var="REQUEST_URI" -->
+<br>
+<h6>HTTP HOST:</h6>
+
+<!--#echo var="HTTP_HOST" -->
+
+<h6>User Agent:</h6>
+
+<!--#echo var="HTTP_USER_AGENT" -->
+
+<h6>Redirect Status:</h6>
+
+<!--#echo var="REDIRECT_STATUS" -->
+
+</body>
+</html>

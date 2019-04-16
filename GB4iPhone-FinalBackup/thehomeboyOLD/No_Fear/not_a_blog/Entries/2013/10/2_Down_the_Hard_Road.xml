@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<content collectionGUID="63F913E4-C0D6-43F1-B375-23842844428F">
+  <lastEdited clientType="local-build-20131031" date="2013-10-31 19:25:10 -0700"/>
+  <textBox id="generic-header-attribute" dynamic="no" visible="yes">
+    <richText>its crashing, its a good sign.</richText>
+  </textBox>
+  <textBox id="generic-title-attributes" dynamic="no" visible="yes">
+    <richText>Down the Hard Road</richText>
+  </textBox>
+  <textBox id="generic-datefield-attributes" dynamic="no" visible="yes">
+    <richText>Wednesday, October 2, 2013</richText>
+  </textBox>
+  <textBox id="generic-body-attributes" dynamic="no" visible="yes">
+    <richText>#include &lt;rant.h&gt;&#xD;#include &lt;uselessblogpost.h&gt;&#xD;//------Caution toatal ranting, AND SOUND if you have work to do just do it, don&#x2019;t let this waste your time.&#xD;&#xD;&#x201C;Why is this still hosted on my primary server?  Honestly I am lazy as they come. As creativity comes, to creativity I am as boring as they come, however get me on the right topic I can talk for Ages.   To the point of headaches.  Unfortunately few understand the complex internal mechanism of my cerebral cortex.  You now what else bugs me, iWeb &#x2019;08 does not support animated GIFS (It is highly unlikely it ever will) also when in photoshop and the teacher requests you to save as a TIFF or JPEG.  Why no love for PNG.  It is substantially better than EVERY other image format, transparency, high DPI, low file size and universal compatibility.  It makes me wonder, did we encode the images on the Voyager spacecraft in PNG, otherwise the foreign life may not be able to recognize them.&#xD;&#xD;In recent development world, my fork of the webkit browser is moving on, as well as my NDS Open Sourced MultiMedia Launcher( I need a new name).  It supports a shit ton of stuff adding functionality to a 7 year old console with only 4Megabytes of Ram and a 66Mhz (it even interferes with the FM Band of radio when overclocked to 70 Mhz!)  CPU Compare that to my Dual Core i5 running at 3.2 Ghz. See the download page for more information on the NDS Multimedia Player.  Also I have initialized project Paper CPU, a project that will teach, myself and mabye others low level Assembly programing, and the revolutionary part is, it is a whole 8-bit CPU that will run on sheets of paper, so much cheaper than the linux pc. (I have nothing against the RPI, in fact I am in the process of procuring one.)&#xD;&#xD;You know what else drives me crazy?  Is when a someone thinks they know more in a field that they clearly know almost nothing about, or their little knowledge is incredibly biased. To much shit.  At least I have the shoes to get through it.&#xD;//end rant&#xD;&#xD;Props to those who can recognize the reference to that last sentence, it is a good film.&#xD;&#xD;Also in sadder news, Tom Clancy, who authored one of my favorite books and influenced my favorite films such as The Hunt for Red October has passed away.  It was a major loss for all, and my condolences to his family.&#xD;&#xD;</richText>
+  </textBox>
+</content>
