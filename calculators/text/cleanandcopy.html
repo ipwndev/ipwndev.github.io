@@ -1,0 +1,515 @@
+<html>
+<head>
+<title>Text Tool (UTF-Mate)</title>
+<script>
+var TextBuffer = [];
+var RedoBuffer = [];
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  var Text = copyText.value;
+  TextBuffer.push(Text);
+  //Windows and Linux Cleaning
+  Text = Text.replace(/(\r\n|\n|\r)/gm," "); //remove newline
+  Text = Text.replace(/\s+/g," "); //add space to linebreak
+  Text = Text.replace(/^[ ]+|[ ]+$/g,''); //leading and lagging spaces
+  //HTML Removal Below:
+  Text = Text.replace(/[&]nbsp[;]/gi," "); // removes all occurrences of &nbsp;
+  Text = Text.replace(/[<]br[^>]*[>]/gi,"");  // removes all <br>
+  document.getElementById("myInput").value = Text;
+  document.getElementById("RevCount").innerHTML = TextBuffer.length / 2 ;
+  TextBuffer.push(Text);
+  copy(Text);
+}
+
+function Base64UI(){
+  var x = document.getElementById("Base64Menu");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+	document.getElementById("prefixsuffix").style.display = "none";
+	document.getElementById("TableConfig").style.display = "none";
+	document.getElementById("ImageMenu").style.display = "none";
+	// Check for the File API support.
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		document.getElementById('files').addEventListener('change', handleFileSelect, false);
+		} else {
+			//alert('The File APIs are not fully supported in this browser.');
+		}
+	} else {
+    x.style.display = "none";
+	//document.getElementById("Base64Menu").innerHTML = '';
+  }
+}
+var handleFileSelect = function(evt) {
+	document.getElementById("myInput").value = "LOADING FILE AND CONVERTING TO BASE64..."
+    var files = evt.target.files;
+    var file = files[0];
+    if (files && file) {
+        var reader = new FileReader();
+
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            document.getElementById("myInput").value = btoa(binaryString);
+        };
+        reader.readAsBinaryString(file);
+    }
+};
+
+function utf2b64(){
+	var copyText = document.getElementById("myInput");
+	var Text = copyText.value;
+	TextBuffer.push(Text);
+	var encodedData = window.btoa(Text);
+	document.getElementById("myInput").value = encodedData;
+	copy(encodedData);
+	
+	TextBuffer.push(Text);
+}
+function b642utf(){
+	var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+	var copyText = document.getElementById("myInput");
+	var Text = copyText.value;
+	if (base64regex.test(Text) == true){
+		TextBuffer.push(Text);
+		var decodeddData = window.atob(Text);
+		document.getElementById("myInput").value = decodeddData;
+		copy(decodeddData);
+		TextBuffer.push(Text);
+	}
+	else{
+		alert("Invalid base64");
+	}
+}
+
+
+function handleFileSelect(evt) {
+  var f = evt.target.files[0]; // FileList object
+  var reader = new FileReader();
+  // Closure to capture the file information.
+  reader.onload = (function(theFile) {
+    return function(e) {
+      var binaryData = e.target.result;
+      //Converting Binary Data to base 64
+      var base64String = window.btoa(binaryData);
+      //showing file converted to base64
+      document.getElementById('myInput').value = base64String;
+      //alert('File converted to base64 successfuly!\nCheck in Textarea');
+    };
+  })(f);
+  // Read in the image file as a data URL.
+  reader.readAsBinaryString(f);
+}
+
+
+function copy(txt){
+  var cb = document.getElementById("cb");
+  cb.value = txt;
+  cb.style.display='block';
+  cb.select();
+  document.execCommand('copy');
+  cb.style.display='none';
+ }
+function undo(){
+	if (!TextBuffer === undefined || !TextBuffer.length == 0) {
+		hmpft = TextBuffer.pop();
+		hmpft = TextBuffer.pop();
+		document.getElementById("myInput").value = hmpft;
+	}
+	document.getElementById("RevCount").innerHTML = TextBuffer.length / 2 ;
+}
+function save(){
+	TextBuffer.push(Text);
+	localStorage.setItem("TextSaved", document.getElementById("myInput").value);
+}
+function read(){
+	document.getElementById("myInput").value = localStorage.getItem("TextSaved");
+}
+function erase(){
+	if (confirm('This will delete item in browser cache and current text area, are you sure?')) {
+			localStorage.removeItem("TextSaved");
+			document.getElementById("myInput").value = "";
+	}
+}
+function JSON2String(){
+	var copyText = document.getElementById("myInput");
+	var Text = copyText.value;
+	TextBuffer.push(Text);
+	
+	var encodedData = JSON.stringify(Text);
+	
+	document.getElementById("myInput").value = encodedData;
+	copy(encodedData);
+	TextBuffer.push(Text);
+}
+function String2JSON(){
+	var copyText = document.getElementById("myInput");
+	var Text = copyText.value;
+	TextBuffer.push(Text);
+	
+	var encodedData = JSON.parse(Text);
+	
+	document.getElementById("myInput").value = encodedData;
+	copy(encodedData);
+	TextBuffer.push(Text);
+}
+function countChars(myInput,displayto) {
+  var len = document.getElementById("myInput").value.length; //chars and bytes
+  document.getElementById(displayto).innerHTML = len;
+	str1 = document.getElementById("myInput").value;
+	var lines = str1.split(/\r|\r\n|\n/);
+	document.getElementById("rowcount").innerHTML = lines.length;
+	str1 = str1.replace(/(^\s*)|(\s*$)/gi,"");
+	str1 = str1.replace(/[ ]{2,}/gi," "); 
+	str1 = str1.replace(/\n /,"\n");
+	document.getElementById("wordcount").innerHTML = str1.split(' ').length; //Word count-spaces
+	var lines = str1.split(/\r|\r\n|\n/);
+	document.getElementById("rowcount").innerHTML = lines.length;
+	document.getElementById("RevCount").innerHTML = TextBuffer.length / 2 ;
+}
+function PrefixSuffix(){
+  var x = document.getElementById("prefixsuffix");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+	document.getElementById("Base64Menu").style.display = "none";
+	document.getElementById("TableConfig").style.display = "none";
+    document.getElementById("ImageMenu").style.display = "none";
+  } else {
+    x.style.display = "none";
+  }
+}
+function ModifyEachLine(){
+	var val = document.getElementById('myInput');
+	TextBuffer.push(val.value);
+	var Prefix = document.getElementById("Prefix");
+	var Suffix = document.getElementById("Suffix");
+	var Pre = "";
+	var Suf = "";
+	if (Prefix && Prefix.value) {
+		Pre = Prefix.value;
+	}
+	if (Suffix && Suffix.value) {
+		Suf = Suffix.value;
+	}
+	
+	var i= 0;
+	var array1 = val.value.split("\n");
+	for ( i = 0; i < array1.length; i++) {
+		array1[i] = Pre + array1[i] + Suf;
+	}
+	val.value = array1.join("\n");
+	TextBuffer.push(val.value);
+	Prefix.value = "";
+	Suffix.value = "";
+}
+
+function FormatCode() {
+    "use strict";
+	//settings
+	var stripWhiteSpaces = true;
+	var stripEmptyLines = true;
+	
+    var code = document.getElementById("myInput").value;
+	TextBuffer.push(document.getElementById("myInput").value);
+	var whitespace          = ' '.repeat(4);             // Default indenting 4 whitespaces
+    var currentIndent       = 0;
+    var char                = null;
+    var nextChar            = null;
+
+
+    var result = '';
+    for(var pos=0; pos <= code.length; pos++) {
+        char            = code.substr(pos, 1);
+        nextChar        = code.substr(pos+1, 1);
+
+        // If opening tag, add newline character and indention
+        if(char === '<' && nextChar !== '/') {
+            result += '\n' + whitespace.repeat(currentIndent);
+            currentIndent++;
+        }
+        // if Closing tag, add newline and indention
+        else if(char === '<' && nextChar === '/') {
+            // If there're more closing tags than opening
+            if(--currentIndent < 0) currentIndent = 0;
+            result += '\n' + whitespace.repeat(currentIndent);
+        }
+
+        // remove multiple whitespaces
+        else if(stripWhiteSpaces === true && char === ' ' && nextChar === ' ') char = '';
+        // remove empty lines
+        else if(stripEmptyLines === true && char === '\n' ) {
+            //debugger;
+            if(code.substr(pos, code.substr(pos).indexOf("<")).trim() === '' ) char = '';
+        }
+
+        result += char;
+    }
+	document.getElementById("myInput").value = result;
+    TextBuffer.push(document.getElementById("myInput").value);
+}
+
+function Help(){
+  var x = document.getElementById("help");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+//Table Global
+var TableRows;
+var TableCols;
+var BorderDepth;
+var TableWidth;
+var CurrentTable = "";
+var ExportedTable = "";
+
+function TableUI(){
+  var x = document.getElementById("TableConfig");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+	document.getElementById("prefixsuffix").style.display = "none";
+	document.getElementById("Base64Menu").style.display = "none";
+	document.getElementById("ImageMenu").style.display = "none";
+  } else {
+    x.style.display = "none";
+	document.getElementById("TableConent").innerHTML = '';
+  }
+}
+function TableGenerator(){
+	//start from scratch
+	el = document.getElementById("TableConent");
+	if (el.childNodes.length != 0){
+		if (confirm('Changing table dimensions will destroy existing table content(s), continue?')) {
+			CurrentTable = "";
+			TableRows = document.getElementById("TableRows").value;
+			TableCols = document.getElementById("TableCols").value;
+			BorderDepth = document.getElementById("BorderDepth");
+			TableWidth = document.getElementById("TableWidth").value;
+		
+			//Generate Table in a format compatible with Export
+			CurrentTable += "<table border='" + BorderDepth.options[BorderDepth.selectedIndex].value + "' width='" + TableWidth + "%'>";
+			for (j=0; j < TableRows; j++){
+			CurrentTable += "<tr>";
+			for (i=0; i < TableCols; i++){
+				CurrentTable += "<th><input onchange='exportTable();' type='text' id='Row" + [j] + "_Col" + [i] + "'></th>";
+			}
+			CurrentTable += "</tr>";
+			}
+			CurrentTable += "</table>";
+			document.getElementById("TableConent").innerHTML = CurrentTable;
+			exportTable();
+		} else {
+		}
+	}else{
+			CurrentTable = "";
+			TableRows = document.getElementById("TableRows").value;
+			TableCols = document.getElementById("TableCols").value;
+			BorderDepth = document.getElementById("BorderDepth");
+			TableWidth = document.getElementById("TableWidth").value;
+		
+			//Generate Table in a format compatible with Export
+			CurrentTable += "<table border='" + BorderDepth.options[BorderDepth.selectedIndex].value + "' width='" + TableWidth + "%'>";
+			for (j=0; j < TableRows; j++){
+			CurrentTable += "<tr>";
+			for (i=0; i < TableCols; i++){
+				CurrentTable += "<th><input onchange='exportTable();' type='text' id='Row" + [j] + "_Col" + [i] + "'></th>";
+			}
+			CurrentTable += "</tr>";
+			}
+			CurrentTable += "</table>";
+			document.getElementById("TableConent").innerHTML = CurrentTable;
+			exportTable();
+	
+	}
+
+}
+function exportTable(){
+	//Realtime Render and Update Code
+	ExportedTable = '';
+	TableRows = document.getElementById("TableRows").value;
+	TableCols = document.getElementById("TableCols").value;
+	BorderDepth = document.getElementById("BorderDepth");
+	SharePointTableUse = document.getElementById("SharePointTableUse");
+	TableWidth = document.getElementById("TableWidth").value;
+	FirstAsRowHeader = document.getElementById("FirstRowHeader").checked;
+	
+	ExportedTable += "<table border='" + BorderDepth.options[BorderDepth.selectedIndex].value + "' width='" + TableWidth + "%'>";
+	for (j=0; j < TableRows; j++){
+		ExportedTable += "<tr>";
+		for (i=0; i < TableCols; i++){
+			var currentIndex = "Row" + [j] + "_Col" + [i];
+			var currentItem = document.getElementById(currentIndex).value;
+			if (j == 0 &&  FirstAsRowHeader == true){
+				ExportedTable += "<th>" + currentItem + "</th>";
+			}else {
+				ExportedTable += "<td>" + currentItem + "</td>";
+			}
+		}
+		ExportedTable += "</tr>";
+	}
+	ExportedTable += "</table>";
+	document.getElementById("myInput").value = ExportedTable;
+	if (SharePointTableUse.options[SharePointTableUse.selectedIndex].value == "1"){
+		FormatCode();
+	}
+}
+function ImageUI(){
+  var x = document.getElementById("ImageMenu");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+	document.getElementById("prefixsuffix").style.display = "none";
+	document.getElementById("TableConfig").style.display = "none";
+	document.getElementById("Base64UI").style.display = "none";
+	
+	} else {
+    x.style.display = "none";
+  }
+}
+
+function ImgToSP() {
+
+	var fileImage = document.getElementById("fileImage");
+    var numWidth = document.getElementById("numWidth");
+			
+	if (fileImage.files.length > 0) {
+       var file = fileImage.files[0];
+       var fileReader = new FileReader();
+       fileReader.onload = function (e) {
+			var ImageQualityFactor = document.getElementById("ImageQuality").value;
+			var FloatImageQF = parseFloat(ImageQualityFactor);
+			var imageDataUrl = e.srcElement.result,
+            scaledImageDataUrl = downscaleImage(imageDataUrl, numWidth.value, undefined, FloatImageQF);                                            
+            imgScaled.src = scaledImageDataUrl;
+         }
+         fileReader.readAsDataURL(file);
+       }
+            var scaledImageWidth = numWidth.value;
+			// Take an image URL, downscale it to the given width, and return a new image URL.
+            downscaleImage = function downscaleImage(dataUrl, newWidth, imageType, imageArguments) {
+            var image, oldWidth, oldHeight, newHeight, canvas, ctx, newDataUrl;
+            
+            // Provide default values
+            imageType = imageType || "image/jpeg";
+            imageArguments = imageArguments || 0.1;
+            // Create a temporary image so that we can compute the height of the downscaled image.
+            image = new Image();
+            image.src = dataUrl;
+            oldWidth = image.width;
+            oldHeight = image.height;
+            newHeight = Math.floor(oldHeight / oldWidth * newWidth)
+            
+            // Create a temporary canvas to draw the downscaled image on.
+            canvas = document.createElement("canvas");
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            var ctx = canvas.getContext("2d");
+            
+            // Draw the downscaled image on the canvas and return the new data URL.
+			if (document.getElementById('ImgToSP_Config_BW').checked) {
+				ctx.filter = 'grayscale(100%)'
+				ctx.imageSmoothingEnabled = true;
+				ctx.imageSmoothingQuality = "high"
+				ctx.drawImage(image, 0, 0, newWidth, newHeight);
+			} else {
+				ctx.drawImage(image, 0, 0, newWidth, newHeight);
+			}
+                
+			//canvas.toDataURL('image/jpeg', 0.5);
+            newDataUrl = canvas.toDataURL(imageType, imageArguments);
+                return newDataUrl;
+            }
+           
+			var CurrentPreview = '<img src="';
+			CurrentPreview += document.getElementById("imgScaled").src;
+			CurrentPreview += '">';
+			document.getElementById("myInput").value = CurrentPreview;
+        }    
+
+</script>
+</head>
+<body>
+<h2>Matt's General Purpouse Text Tool</h2>
+<button onclick="save()">Write</button> | <button onclick="read()">Read</button> | <button onclick="erase()">Erase</button> | <button onclick="undo()">Undo Action</button> | <button onclick="Help()">Show/Hide Help</button>
+<div id="TextToolbar">
+	<p>
+	<button onclick="myFunction()">Clean Text and Copy</button> | 
+	<button onclick="Base64UI()">Base64/Encoding Tools</button> |	
+	<button onclick="ImageUI()">Image Tools</button> |
+	<button onclick="PrefixSuffix()">Add Suffix/Prefix</button> | 
+	<button onclick="FormatCode()">Beautify HTML</button> | 
+	<button onclick="JSON2String()">Stringify JSON</button> |
+	<button onclick="String2JSON()">ParseJSON</button> |
+	<button style="display: none;" onclick="Compress()">Compress HTML</button> 
+	<button onclick="TableUI()">Table Generator</button>
+	</p>
+	<div style="display: none;" id="prefixsuffix"> Prefix: <input id="Prefix" type="text" /> &nbsp; Suffix:<input id="Suffix" type="text" /> <button onclick="ModifyEachLine()">Modify Text</button> <br></div>
+	<div style="display: none;" id="Base64Menu"><button onclick="utf2b64()">Convert UTF-8 into Base64</button>&nbsp; <button onclick="b642utf()">Convert Base 64 into UTF-8</button>&nbsp; Upload File and Convert to Base64: <input type="file" id="files" name="files">  <br></div>
+	<div style="display: none;" id="ImageMenu">
+
+        <label for="file">Select Image</label>
+        <input type="file" id="fileImage" accept="image/*"/>
+        
+        <label for="numWidth">Scaled Image Width</label>
+        <input type="number" id="numWidth" value="320"/>
+		
+		<label for="ImageQuality">Quality</label>
+        <input type="number" min=".01" max="1" step=".05" id="ImageQuality" value=".3"/>
+
+
+        <label for="ImgToSP_Config_BW">Text Mode:</label>
+        <input type="Checkbox" id="ImgToSP_Config_BW" checked/>
+
+        <input type="button" value="Convert to SharePoint Image" onclick="ImgToSP();"/>
+        <br>Preview:<br>
+        <img id="imgScaled"/>
+
+	</div>
+	</div id="TableGenerator">
+<div style="display: none;" id="TableConfig">
+	<div id="TableInitialConfig">
+	Rows: <input type="Number" id="TableRows" name="TableRows" pattern="[1-9]" min="1" max="100" value="1"/>   |  Columns: <input type="Number" id="TableCols" name="TableCols" pattern="[1-9]" min="1" max="100" value="1"/>
+		<button onclick="TableGenerator()">Generate</button><br>
+	</div>
+		Table Border:
+		<select onchange='exportTable();' id="BorderDepth" name="TableBorder">
+			<option value="0">None</option>
+			<option selected value="1">Present</option>
+		</select>  |
+		First Row As Header:
+		<input onchange='exportTable();' checked type="checkbox" id="FirstRowHeader" value="True"> | 		
+		Area Occupied(Table Width as Percent): <input onchange='exportTable();' type="Number" id="TableWidth" name="TableWidth" pattern="[1-9]" min="1" max="100" value="80"/>   |		
+		<select onchange='exportTable();' id="SharePointTableUse" name="SharePointTableUse">
+			<option value="0">Minimifed</option>
+			<option value="1">Clean / Expanded</option>
+		</select>
+		<br>
+		<hr style="border: .5px solid black;" />
+		<div id="TableConent"></div>
+</div>
+<div style="display: none;" id="help">
+Matt's General Purpouse Text Tool - Formerly Known as "Text Cleaner"
+	<p>Description of buttons:</p>
+	<ul>
+		<li>Clean and Copy - This removes linebreaks as well as preceding and trailing spaces.</li>
+		<li>Convert UTF-8 into Base64 - Convert String to Base64 encoding and copies text to buffer</li>
+		<li>Convert Base64 into UTF-8 - Convert Base64 encoded text into UTF-8 and copies text to buffer</li>
+		<li>Write/Read/Erase - storage manager for browser saving of text</li>
+		<li>Add Suffix/Prefix - Append string to text to string in front of and behind</li>
+		<li>Beautify HTML(WIP) - Expand HTML adds indents in order to make code readable(Mostly working)</li>
+		<li>Minimify HTML(WIP - TBA) - Compress HTML in order to reduce filesize</li>
+		<li>Table Generator(WIP) - Create an HTML Table, useful for sharepoint, etc.(Mostly working). Supports inline font tags, ie <xmp><bold></bold></xmp></li>
+		<li>NEW! - JSON Tools(String/Expand), linter to be added</li>
+		<li>NEW! - Image manipulation!(via base64) - Try it under image Tools!</li>
+		<li>All Data is stored locally, however excercise caution regarding data management.  View the source.</li>
+	</ul>
+</div>
+<hr style="border: .5px solid black;" />
+	
+</div>
+	<textarea style="width:100%; height: 83%" id="myInput" rows="10" onchange="countChars('data','charcount');" onkeyup="countChars('data','charcount');" onkeydown="countChars('data','charcount');" onmouseout="countChars('data','charcount');" ></textarea>
+<br>
+	<span id="charcount">0</span> Characters / Bytes  |  <span id="wordcount">0</span> Words  |  <span id="rowcount">0</span> Rows  |  Revision Count <span id="RevCount">0</span><br>
+<br>
+	<input id="cb" type="text" hidden>
+</body>
+<html>
