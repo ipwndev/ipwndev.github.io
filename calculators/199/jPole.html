@@ -2,7 +2,6 @@
 <head>
     <title>EEE - 199 jPole</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="http://gb4iphone.x10.mx/161/web-component-smith-chart.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109081589-1"></script>
     <script>
@@ -43,7 +42,7 @@ function toCartesian(radius,degrees){
 function toPolar(x,y){
     var r = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
     var theta = Math.atan2(y,x);
-    return [r, toDegrees(theta)]; //export as a motha fuckin array
+    return [r, toDegrees(theta)]; //export as array
     //return(r + ", " + toDegrees(theta)+"°");
 }
 function toWavelength(frequency){

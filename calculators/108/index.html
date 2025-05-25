@@ -1,0 +1,1096 @@
+<html>
+    <head>
+        <title>Transistor and Mosfet</title>
+        
+
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109081589-1"></script>
+        <script>
+            console.warn("This code is filled with errors and profanity.  Use at own risk.");
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-109081589-1');
+        </script>
+
+        <script>
+        //2025 - Note this was written a number of years before publishing, results may incorrect.  
+        //also awh shit here we go again redbull and eurobeat lego
+        Vt = 26 * Math.pow(10,-3); //KtoverQ in mV
+
+        function NPNBJT (){
+            //Inputs
+            b = Number(document.getElementById("NPNBJT_b").value);
+            //Maths
+            ans_alpha = b/(b+1);
+            //RenderAns
+            document.getElementById("NPNBJT_ans_a").value = ans_alpha;
+
+        }
+
+        function transconductance_gm (){
+            //Inputs
+            Ic = Number(document.getElementById("transconductance_gm_Ic").value);
+            //Maths
+            Ick = Ic * Math.pow(10,-6);
+            gm = Ick/Vt * 1000;
+            //RenderAns
+            document.getElementById("transconductance_gm_ans_gm").value = gm;
+
+        }
+
+        function transconductance_fet (){
+            //Inputs
+            Id = Number(document.getElementById("transconductance_fet_Id").value);
+            Von = Number(document.getElementById("transconductance_fet_Von").value);
+            //Maths
+            Idk = Id * Math.pow(10,-6);
+            gm = 1000000*((2*Idk)/Von);//bs is what it is
+            //RenderAns
+            document.getElementById("transconductance_fet_ans").value = gm;
+
+        }
+
+        function bTrans (){
+            //Inputs
+            Id = Number(document.getElementById("bTrans_Id").value);
+            Vsb = Number(document.getElementById("bTrans_Vsb").value);
+            wl = Number(document.getElementById("bTrans_wl").value);
+            kn = Number(document.getElementById("bTrans_kn").value);
+            phi = Number(document.getElementById("bTrans_phi").value);
+            y = Number(document.getElementById("bTrans_y").value);
+            //Maths
+            Idk = Id * Math.pow(10,-6);
+            knk = kn * Math.pow(10,-6);
+
+            gm = y/(2*Math.sqrt(phi + Vsb));
+            g1 = Math.sqrt(2*knk*wl*Idk);
+            ans = g1 * gm;
+            ans = ans*1000;
+            //RenderAns
+            document.getElementById("bTrans_ans_gmb").value = ans;
+
+        }
+
+        function rds (){
+            //Inputs
+            Id = Number(document.getElementById("rds_Id").value);
+            lamda = Number(document.getElementById("rds_lamda").value);
+            //Maths
+            Idk = Id * Math.pow(10,-6);
+            rds_ans = (1/(lamda*Idk)/1000);
+            
+            //RenderAns
+            document.getElementById("rds_ans_rds").value = rds_ans;
+
+        }
+        function base2emitterR (){
+            //Inputs
+            Ic = Number(document.getElementById("base2emitterR_Ic").value);
+            beta = Number(document.getElementById("base2emitterR_beta").value);
+            //Maths
+            Ick = Ic * Math.pow(10,-6);
+            ans=((beta*Vt)/Ick)/1000;
+            //RenderAns
+            document.getElementById("base2emitterR_ans").value = ans;
+        }
+
+        function PNPBJT (){
+            //Inputs
+            Ic = Number(document.getElementById("PNPBJT_Ic").value);
+            Beta = Number(document.getElementById("PNPBJT_B").value);
+            VA = Number(document.getElementById("PNPBJT_VA").value);
+            
+            Ick = Ic * 10 * Math.pow(10,-6);
+            //Maths
+            gm = Ick/Vt;
+            rd = VA/Ick;
+            ans_uf = gm * rd;
+
+            //RenderAns
+            document.getElementById("PNPBJT_ans_openGain").value = ans_uf;
+        }
+
+        function Mosfet_SI_GS(){
+            //Inputs
+            W = Number(document.getElementById("Mosfet_SI_GS_W").value);
+            L = Number(document.getElementById("Mosfet_SI_GS_L").value);
+            Tox = Number(document.getElementById("Mosfet_SI_GS_Tox").value);
+
+            //Maths
+            //cgs triode
+            Cgs = .5 * (W * Math.pow(10,-6)) * (L * Math.pow(10,-6)) * (3.9 * 8.85 * Math.pow(10,-12))/(Tox * Math.pow(10,-10));
+            Cgs = Cgs * Math.pow(10,15);
+            //gate to drain triode
+            Cgd = .5 * W * Math.pow(10,-6) * L * Math.pow(10,-6) * (3.9*8.85*Math.pow(10,-12))/(Tox*Math.pow(10,-10));
+            Cgd = Cgd * Math.pow(10,14);
+
+            //Saturation cgs
+            Cgs_sat = (2/3) *  (3.9 * (8.854*Math.pow(10,-12))/(Tox*Math.pow(10,-10)) * (W*Math.pow(10,-6)) * (L*Math.pow(10,-6)));
+            Cgs_sat = Cgs_sat * Math.pow(10,15);
+            //Saturation cgd
+            Cgd_sat = (2/3) *  (3.9 * (8.854*Math.pow(10,-12))/(Tox*Math.pow(10,-10)) * (W*Math.pow(10,-6)) * (L*Math.pow(10,-6)));
+            Cgd_sat = Cgd_sat * Math.pow(10,14);
+            
+            //RenderAns
+            document.getElementById("Mosfet_SI_GS_ans_Cgs").value = Cgs;
+            document.getElementById("Mosfet_SI_GS_ans_Cgd").value = Cgd;
+
+            document.getElementById("Mosfet_SI_GS_ans_sat_Cgs").value = Cgs_sat;
+            document.getElementById("Mosfet_SI_GS_ans_sat_Cgd").value = Cgd_sat;
+
+            
+        }
+        function c2ePNP (){
+            //Inputs
+            Ic = Number(document.getElementById("c2ePNP_Ic").value);
+            VA = Number(document.getElementById("c2ePNP_VA").value);
+            
+            Ick = Ic * 10 * Math.pow(10,-6);
+            //Maths
+            ans_r = VA/Ick;
+            ans_r = ans_r/100;
+
+            //RenderAns
+            document.getElementById("c2ePNP_ans_R").value = ans_r;
+        }
+
+
+        function nmos (){
+            //Inputs
+            Id = Number(document.getElementById("nmos_id").value);
+            Von = Number(document.getElementById("nmos_Von").value);
+            lamda = Number(document.getElementById("nmos_lamda").value);
+
+            Idk = Id * 10 * Math.pow(10,-6);
+            Vonk = Von * 10 * Math.pow(10,-3);
+
+            //Maths
+            Kn = Id/(Math.pow(Vonk,2)); //drain current
+            Kn = Kn/10000;
+            Gm = 2 * Math.sqrt(Kn*Id*Math.pow(10,-6));//transconductance in AoverV
+            Ro = 1/(lamda*Idk)*10; //small signal resistance out
+            nmos_ans_ogain = (-1) * Gm * Ro;
+
+            //RenderAns
+            document.getElementById("nmos_ans_ogain").value = nmos_ans_ogain;
+        }
+
+        function BiPolar_2R(){
+            //Inputs
+            Vcc = Number(document.getElementById("2RBJT_Vcc").value);
+            Vee = Number(document.getElementById("2RBJT_Vee").value);
+            Vb = Number(document.getElementById("2RBJT_Vb").value);
+            Rc = Number(document.getElementById("2RBJT_Rc").value);
+            Re = Number(document.getElementById("2RBJT_Re").value);
+            Beta = Number(document.getElementById("2RBJT_Beta").value);
+
+            Vbe = .7;  //trans activation
+
+            //Ick = Ic * 10 * Math.pow(10,-6);
+            //Rb1k = Rb1 * Math.pow(10,3);
+            //Rb2k = Rb2 * Math.pow(10,3);
+            Rck = Rc * Math.pow(10,3);
+            Rek = Re * Math.pow(10,3);
+
+            //Maths
+            //BUT FIRST LET ME CHECK THE TRANSISTOR
+            if (document.getElementById('2RBJT_Q1').checked) 
+            {
+                //PNP
+                //emitterV for PNP
+                Ie = (Vcc-Vb-Vbe)/Rek;
+                emitterV = Vcc - (Ie*Rek);
+
+            } 
+            else {
+                //NPN
+                //emitterV for NPN
+                InnerLoopKVL = (Vcc - Vbe + Vb)/Rek; //otherwise known as Ie in mA
+                emitterV = InnerLoopKVL * Rek - Vcc;
+                
+            }
+
+            //RenderAns
+            document.getElementById("B2RBJT_ans_emitterV").value = emitterV;
+            
+        }
+
+
+        function BJTSwap_2R()
+        //this is UI control 
+        {
+            BiPolar_2R();//because I am a lazy, Auto-recalulate after swaping transistor
+            if (document.getElementById('2RBJT_Q1').checked) 
+            {
+                //PNP
+                document.getElementById("2RBJT_Img").src="assets/Bias_2R_PNP_wo_RB_small.jpg";
+                
+            } else {
+                //NPN
+                document.getElementById("2RBJT_Img").src="assets/Bias_2R_NPN_wo_RB_small.jpg";
+            }
+            //this segment is for two resistor one transistor 
+        }
+
+        function Mosfet2R(){
+            //Inputs
+            //THIS ONE HAS ISSUES
+            Vdd = Number(document.getElementById("MOS2R_Vdd").value);
+            Vss = Number(document.getElementById("MOS2R_Vss").value);
+            Vg = Number(document.getElementById("MOS2R_Vg").value);
+            Rs = Number(document.getElementById("MOS2R_Rs").value);
+            Rd = Number(document.getElementById("MOS2R_Rd").value);
+            Vtt = Number(document.getElementById("MOS2R_Vt").value);
+            Von = Number(document.getElementById("MOS2R_Von").value);
+
+            Vbe = .7;  //trans activation
+
+            Rsk = Rs * Math.pow(10,3);
+            Rdk = Rd * Math.pow(10,3);
+
+            //Maths
+            if (document.getElementById('MOS2R_M1').checked) 
+            {
+                //PMOS
+                Vgs = Von + Math.abs(Vtt);
+                Vs = Vg - Vgs;
+                Is = (Vdd - Vs)/Rsk;
+
+                Vsd = Vg + Vtt;
+
+                Rd = (Math.abs(Vss)-Vsd)/Is;
+                Rd = Rd/1000;
+
+                /*
+                Vgs = Von + Math.abs(Vtt);
+                Vs = Math.abs(Vg) - Math.abs(Vgs);
+                Is = (Vdd+Vs)/Rsk; //In mA Is=Io
+                Vds = Von + Math.abs(Vs);  //Volts
+                //Make sure its in saturation
+                Rd = ((Vdd + Math.abs(Vss) - Vds)/Is) - Rsk;
+                Rd = Rd/1000;
+                */
+            } 
+            else {
+                //NMOS
+                Rd="nc"
+
+            }
+
+            //RenderAns
+            document.getElementById("MOS2R_ans_Is").value = "nc";
+            document.getElementById("MOS2R_ans_Rd").value = Rd;
+            
+        }
+
+
+        function MOS2R_Swap()
+        //this is UI control 
+        {
+            Mosfet2R();
+            if (document.getElementById('MOS2R_M1').checked) 
+            {
+                //PMOS
+                document.getElementById("MOS2R_Img").src="assets/Bias_2R_PMOS_small.jpg";
+                
+            } else {
+                //NMOS
+                document.getElementById("MOS2R_Img").src="assets/Bias_2R_NMOS_small.jpg";
+            }
+        }
+
+        function Bias_4R_PNP_wo_RE_bypass_small(){
+            //Inputs
+            Vcc = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Vcc").value);
+            Rb1 = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Rb1").value);
+            Rb2 = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Rb2").value);
+            Rc = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Rc").value);
+            Re = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Re").value);
+            Beta = Number(document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_Beta").value);
+
+            //Ick = Ic * 10 * Math.pow(10,-6);
+            Rb1k = Rb1 * Math.pow(10,3);
+            Rb2k = Rb2 * Math.pow(10,3);
+            Rck = Rc * Math.pow(10,3);
+            Rek = Re * Math.pow(10,3);
+
+            //Maths
+            //BUT FIRST LET ME CHECK THE TRANSISTOR
+            if (document.getElementById('BJTBias4R').checked) 
+            {
+                //PNP
+                //emitterV for PNP
+                Rb = (Rb1*Rb2)/(Rb1+Rb2);
+                Rbk = Rb * Math.pow(10,3);//like Rth
+                Vb = (Vcc * Rb2k) / (Rb1k + Rb2k);
+                Ib = (Vcc-Vb-.7)/(Rb+(1+Beta)*Re); //in mA
+                Ie = (1+Beta)*Ib; //also in mA  
+                emitterV = Vcc-Ie*Re; //Temporary.. I HOPE I HOPE
+
+                //Value of Rc in K to set max pk-pk swing NO CLIP NO CLIP
+                //this one was a **was tough** to implement in software
+                alpha = Beta/(1+Beta);
+                Register1 = (Beta+1)*(((1/Rb1)+(1/Rb2)));//multi by Vb 
+                Register2 = (Beta+1)*(Vcc/Rb1); 
+                //above is Ie
+                Register3 = (Vcc - .7)/Re; 
+                Vbc = (Register3 + Register2)/(Register1+(1/Re));
+                Iec = (Vcc - (.7 + Vbc))/Rek;
+                Icc = alpha * Iec;
+                MaxVc = Vbc/2;
+                RcMax = (MaxVc/Icc)/1000;
+
+                //Ib
+                Vthb = ((Vcc*Rb2k)/(Rb1k+Rb2k));
+                Rthb = (Rb1k*Rb2k)/(Rb1k+Rb2k);
+                Bullshit_KVL = (Vcc - .7 - Vthb)/(Rek * (1+Beta) + Rthb);
+                Ib = Bullshit_KVL;
+                Ib = Ib * Math.pow(10,6);
+
+                //Ic collector current
+
+            } 
+            else {
+                //NPN
+                //emitterV for NPN
+                Register1 = (Vcc*Rb2k)/(Rb1k+Rb2k); //aka vin
+                Register2 = (Rb1 * Rb2)/(Rb1 + Rb2) * Math.pow(10,3); //rth
+                KVL_npn = (Register1 - .7)/(Register2 + (Beta * Rek)); //oslo known as Ib.. very smol typ
+                emitterV = (1 + Beta) * KVL_npn * Rek;
+                
+                //Value of RC in K.  Max Pk-Pk swing NO CLIP NO CLIP PART II Electric BOOGALOO
+                VoltageDivisionFuckYeah = (Vcc*Rb2)/(Rb1+Rb2);
+                MinimumV = VoltageDivisionFuckYeah - .7;
+                MidpointV = .5 * (Vcc + MinimumV);
+                KVL_npn_Ic = MinimumV/Rek;
+                Icc = (KVL_npn_Ic/((1/Beta)+1));
+                RcMax = ((Vcc-MidpointV)/Icc)/1000;
+
+                //Ib
+                Veb = ((Vcc*Rb2k)/(Rb1k+Rb2k)) -.7;
+                Ieb = Veb/Rek; //in ma
+                Ib = Ieb/(1+Beta);
+                Ib = Ib * Math.pow(10,6);
+
+                //Ie
+
+
+            }
+
+
+            //RenderAns
+            //"Burn, baby! BURN!"
+            document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_ans_emitterV").value = emitterV;
+            document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_ans_Rc").value = RcMax;
+            document.getElementById("Bias_4R_PNP_wo_RE_bypass_small_ans_Ib").value = Ib;
+            
+        
+            
+        }
+
+
+        function Mosfet4R(){
+            //Inputs
+            Idrain = Number(document.getElementById("Mosfet4R_Idrain").value);
+            Vdd = Number(document.getElementById("Mosfet4R_Vdd").value);
+            Rg1 = Number(document.getElementById("Mosfet4R_Rg1").value);
+            Rg2 = Number(document.getElementById("Mosfet4R_Rg2").value);
+            Vt = Number(document.getElementById("Mosfet4R_Vt").value);
+            Von = Number(document.getElementById("Mosfet4R_Von").value);
+
+            Id = Idrain * Math.pow(10,-3);
+            Rg1k = Rg1 * Math.pow(10,3);
+            Rg2k = Rg2 * Math.pow(10,3);
+            //Rck = Rc * Math.pow(10,3);
+            //Rek = Re * Math.pow(10,3);
+
+            //Maths
+            //BUT FIRST LET ME CHECK THE TRANSISTOR
+            Rb = (Rg1*Rg2)/(Rg1+Rg2);
+            if (document.getElementById('Mosfet4R_M1').checked) 
+            {
+                //P
+                Vg = Vdd * (Rg2k)/(Rg2k+Rg1k);
+                Rs = (Vg-Math.abs(Vt)+Math.abs(Von))/Id;
+                Rs = Rs/1000;
+            } 
+            else {
+                //N
+            }
+
+
+            //RenderAns
+            //"Burn, baby! BURN!"
+            document.getElementById("Mosfet4R_ans_Rs").value = Rs;            
+        }
+
+
+        function BJTImgSwap()
+        //this is UI control for Bias_4R_PNP_wo_RE_bypass_small 
+        {
+            Bias_4R_PNP_wo_RE_bypass_small();
+            if (document.getElementById('BJTBias4R').checked) 
+            {
+                //PNP
+                document.getElementById("BJTImgSwap").src="assets/Bias_4R_PNP_wo_RE_bypass_small.jpg";
+                
+            } else {
+                //NPN
+                document.getElementById("BJTImgSwap").src="assets/Bias_4R_NPN_wo_RE_bypass_small.jpg";
+            }
+        }
+
+       
+        function cgmos(){
+            //Inputs
+            Rd = Number(document.getElementById("CGMOS_Rd").value);
+            Rs = Number(document.getElementById("CGMOS_Rs").value);
+            Rg = Number(document.getElementById("CGMOS_Rg").value);
+            wl = Number(document.getElementById("CGMOS_WL").value);
+            id = Number(document.getElementById("CGMOS_Id").value);
+            vtn = Number(document.getElementById("CGMOS_VTN").value);
+            kn = Number(document.getElementById("CGMOS_kn").value);
+            lamda = Number(document.getElementById("CGMOS_lamda").value); 
+            
+
+            idk = id * Math.pow(10,-6); //Can relate to var name
+            Rdk = Rd * Math.pow(10,3);
+            Rsk = Rs * Math.pow(10,3);
+            Rgk = Rg * Math.pow(10,3);
+            knk = kn * Math.pow(10,-6);
+
+
+            //Maths
+            //smol sigal neglects ro channel length modulation.
+            //Both PMOS and NMOS have same eq for inputRand output.  Leaving swtiching code for other application if they arise
+            gm = Math.sqrt(2*knk*wl*idk); //in aoverv
+            //rin
+            inputR = 1/gm;
+
+            //rout
+            ro = 1/(lamda*idk);
+            Register1 = Rsk + gm*Rsk*ro + ro;
+            outputR = ((Rdk * Register1)/(Rdk + Register1)) / 1000;
+
+            //voltage gain
+            VoVin = (gm * (-1) * Rdk)/(1+gm*Rsk);
+            
+            if (document.getElementById('MosIMGSwap_check').checked) 
+            {
+                //placeholder for nmos  
+                //2025 note - this never happened.  TODO
+            }else {
+            }
+
+            //RenderAns
+            document.getElementById("CGMOS_ans_InputR").value = inputR;
+            document.getElementById("CGMOS_ans_OutputR").value = outputR; 
+            document.getElementById("CGMOS_ans_gainV").value = VoVin; 
+
+            //Heart feels like 1994 honda civic w/vtech bouncing off the rev limiter
+        }
+
+        function MosIMGSwap()
+        //this is UI control for cgMos
+        {
+            cgmos();
+            if (document.getElementById('MosIMGSwap_check').checked) 
+            {
+                //NMOS
+                document.getElementById("MosIMGSwap").src="assets/CG_NMOS_with_RG_R_load_small.jpg";
+                
+            } else {
+                //PMOS
+                document.getElementById("MosIMGSwap").src="assets/CG_PMOS_with_RG_R_load_small.jpg";
+            }
+        }
+
+        function CBBJT(){
+            //Inputs
+            Rc = Number(document.getElementById("CBBJT_Rc").value);
+            Re = Number(document.getElementById("CBBJT_Re").value);
+            Rb = Number(document.getElementById("CBBJT_Rb").value);
+            Ic = Number(document.getElementById("CBBJT_Ic").value);
+            Beta = Number(document.getElementById("CBBJT_Beta").value);
+            VA = Number(document.getElementById("CBBJT_VA").value);
+            
+
+            Ick = Ic * Math.pow(10,-6); //Can relate to var name
+            Rck = Rc * Math.pow(10,3);
+            Rek = Re * Math.pow(10,3);
+            Rbk = Rb * Math.pow(10,3);
+
+            //Maths
+            //low freq input Ri
+            inputR = (Beta * (Vt/Ick) + Rbk)/(1+Beta);
+            //low freq output Ro
+            //possibly dead code
+            gr = (Beta*Vt)/Ick; //in ohm
+            go = VA/Ick; //in ohm
+            gm = Ick/Vt;
+            //Vtest = go/(1-)
+
+            //Low Frequency Voltage Gain
+            //LowFreqGain
+            Rth_l = (Beta*Vt)/Ick; //in ohm
+            LowFreqGain = (Beta*Rck)/((Rth_l + Rbk) + (1+Beta)*Rek);
+            //Low frequency output resistance
+            ro = VA/Ick;
+            reg1 = ro * (1 + gm*Rek);
+            lfOut = ((Rck*reg1)/(reg1+Rck))/1000;
+
+            //RenderAns
+            document.getElementById("CBBJT_ans_InputR").value = inputR;
+            document.getElementById("CBBJT_ans_OutputR").value = lfOut; 
+            document.getElementById("CBBJT_ans_gainV").value = LowFreqGain; 
+            //this whole project makes me think of this: https://xkcd.com/1513/
+        }
+
+
+        function NPNCommonEmitter (){
+            //Inputs
+            Rc = Number(document.getElementById("NPNCommonEmitter_Rc").value);
+            Re = Number(document.getElementById("NPNCommonEmitter_Re").value);
+            Rb = Number(document.getElementById("NPNCommonEmitter_Rb").value);
+            Ic = Number(document.getElementById("NPNCommonEmitter_Ic").value);
+            Beta = Number(document.getElementById("NPNCommonEmitter_Beta").value);
+
+            Ick = Ic * 10 * Math.pow(10,-6);
+            Rek = Re * Math.pow(10,3);
+            Rck = Rc * Math.pow(10,3);
+            Rbk = Rb * Math.pow(10,3); //rbmk reactor does not explode...
+            //Maths
+            //input R
+            gm = Ick/Vt;
+            Rth = Beta/gm * 10;
+            Ri = Rbk + (Rth) + (Beta+1)*Rek;
+            inputR = Ri/1000;
+
+            //low freq voltage gain
+            LowFreqVGain = (-1) * (Beta*Rck)/(Rbk+Rth+(1+Beta)*Rek);
+
+            //OutputR
+            gm = Ick/Vt; //in AoverV
+            rth = Beta/gm * 10; //in kohm
+            Ib = 1/Rek + (1+Beta)/(rth+Rbk); //in Ampere
+            outputR = 1/Ib;
+
+            //NPNCommonEmitter_ans_outputVgain_re
+            Vre = rth/(Beta+1);
+            VgainRe = Rek/(Rek+Vre);
+            
+            //RenderAns
+            document.getElementById("NPNCommonEmitter_ans_inputR").value = inputR;
+            document.getElementById("NPNCommonEmitter_ans_outputR").value = "NC";
+            document.getElementById("NPNCommonEmitter_ans_outputVgain").value = LowFreqVGain;
+            document.getElementById("NPNCommonEmitter_ans_outputVgain_re").value = VgainRe;
+            
+        } 
+   
+        function CE_PNP_with_RE_R_load_small (){
+            //Inputs
+            Rc = Number(document.getElementById("CE_PNP_with_RE_R_load_small_Rc").value);
+            Re = Number(document.getElementById("CE_PNP_with_RE_R_load_small_Re").value);
+            Rb = Number(document.getElementById("CE_PNP_with_RE_R_load_small_Rb").value);
+            Ic = Number(document.getElementById("CE_PNP_with_RE_R_load_small_Ic").value);
+            Beta = Number(document.getElementById("CE_PNP_with_RE_R_load_small_Beta").value);
+
+            Ick = Ic * 10 * Math.pow(10,-6);
+            Rck = Rc * Math.pow(10,3);
+            Rek = Re * Math.pow(10,3);
+            Rbk = Rb * Math.pow(10,3); //rbmk reactor does not explode...
+            //Maths
+            //input R
+            Vh = (Beta*Vt)/Ick * 10; //ans in ohms
+            inputR = Vh + Rbk + (Beta+1) * Rek;
+            inputR = inputR/1000;
+
+            //OutputR
+            gm = Ick/Vt; //in AoverV
+            rth = Beta/gm * 10; //in kohm
+            Ib = 1/Rek + (1+Beta)/(rth+Rbk); //in Ampere
+            outputR = 1/Ib;
+
+            //low frequency voltage gain
+            vRth = (Beta*Vt)/Ick * 10; // in kohm
+            vVo = Beta*Rck;
+            vVi = -(Rbk+vRth)-(Beta+1)*(Rek);
+            voltagegain = vVo/vVi;
+            
+            //RenderAns
+            document.getElementById("CE_PNP_with_RE_R_load_small_ans_inputR").value = inputR;
+            document.getElementById("CE_PNP_with_RE_R_load_small_ans_outputR").value = outputR;
+            document.getElementById("CE_PNP_with_RE_R_load_small_ans_outputvgain").value = voltagegain;
+            
+            
+        }
+
+        function CD_PMOS_calc (){
+            //Inputs
+            Rd = Number(document.getElementById("CD_PMOS_Rd").value);
+            Rs = Number(document.getElementById("CD_PMOS_Rs").value);
+            Rg = Number(document.getElementById("CD_PMOS_Rg").value);
+            wl = Number(document.getElementById("CD_PMOS_wl").value);
+            Id = Number(document.getElementById("CD_PMOS_Id").value);
+            vtp = Number(document.getElementById("CD_PMOS_vtp").value);
+            kp = Number(document.getElementById("CD_PMOS_kp").value);
+            lamda = Number(document.getElementById("CD_PMOS_lamda").value);
+
+            Idk = Id * Math.pow(10,-6);
+            kpk = kp * Math.pow(10,-6);
+            Rdk = Rd * Math.pow(10,3);
+            Rgk = Rg * Math.pow(10,3);
+            Rsk = Rs * Math.pow(10,3);
+            //Maths
+            //OutputR
+            gmOr = Math.sqrt(2*Idk*kpk*wl);
+            Ris = 1/gmOr;
+            outputR = (Rsk*Ris)/(Rsk+Ris);
+            
+            //RenderAns
+            document.getElementById("CD_PMOS_ans_Ro").value = outputR;            
+            
+        }
+
+
+        function lfGainWVoltage (){
+            //Inputs
+            rc = Number(document.getElementById("lfGainWVoltage_Rc").value);
+            re = Number(document.getElementById("lfGainWVoltage_Re").value);
+            //Maths
+            pnp_ce_lfgain = (-1)*(rc/re);
+            
+            //RenderAns
+            document.getElementById("lfGainWVoltage_ans_lfgain").value = pnp_ce_lfgain;
+
+        }
+
+
+
+/*
+
+* For the brave souls who get this far: You are the chosen ones,
+* the valiant knights of programming who toil away, without rest,
+* fixing our most awful code. To you, true saviors, kings of men,
+* I say this: never gonna give you up, never gonna let you down,
+* never gonna run around and desert you. Never gonna make you cry,
+* never gonna say goodbye. Never gonna tell a lie and hurt you.
+*/
+        
+        
+        </script>
+        <style>
+        /* Bottom left text */
+        .bottom-left {
+        position: absolute;
+        bottom: 8px;
+        left: 16px;
+        }
+        .container {
+        position: relative;
+        text-align: center;
+        color: black;
+        }
+        .centered {
+        position: absolute;
+        top:  50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        }
+
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            
+            <div class="centered">
+                <H2>Transistor and Mosfet Calculators</H2>
+                <i>A number of tools to understand the concepts</i>
+            </div>
+          </div>
+        
+        <hr>
+
+        <div id="NPNBJT">
+            <p>If the common-emitter current gain (Beta) for an NPN/PNP BJT in the forward-active region is equal to xxx, then what is the common-base current gain (alpha) for this transistor?   </p>    
+            Common-Emitter current Gain:(Beta) <input id ="NPNBJT_b" type="text"><br>
+            
+            <button onclick="NPNBJT()">Calculate</button><br>
+            common-base current gain (alpha) for this transistor: <input id ="NPNBJT_ans_a" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="Mosfet_SI_GS">
+            <p>If a MOSFET with W = xx um and L = xx um is biased in <strong>triode</strong>, what is the gate-to-source capacitance, Cgs, in femtofarads? Assume the gate dielectric is silicon dioxide with tox = xx angstroms.<br> <i>Using Eox for SiO2 = 3.9</i><br></p>
+            
+            W: (um) <input id ="Mosfet_SI_GS_W" type="text"><br>
+            L: (um) <input id="Mosfet_SI_GS_L" type="text"><br>
+            SI Tox: (Angstroms) <input id="Mosfet_SI_GS_Tox" type="text"><br>
+            
+            <button onclick="Mosfet_SI_GS()">Calculate</button><br><br>
+            Mosfet based in <strong>Triode</strong><br>
+            gate-to-source capacitance, Cgs(Femtofarads): <input id ="Mosfet_SI_GS_ans_Cgs" type="text"><br>
+            gate-to-drain capacitance, Cgd(Femtofarads): <input id="Mosfet_SI_GS_ans_Cgd" type="text"><br>
+            <p>Mosfet based in <strong>Saturation</strong>:
+            <br>
+            gate-to-source capacitance, Cgs(Femtofarads): <input id ="Mosfet_SI_GS_ans_sat_Cgs" type="text"><br>
+            gate-to-drain capacitance, Cgd(Femtofarads): <input id="Mosfet_SI_GS_ans_sat_Cgd" type="text"><br>           
+            
+            
+            </p>
+            
+            <hr>
+        </div>
+
+
+
+        <div id="transconductance_gm">
+            <p>What is the transconductance, gm, in mA/V for an BJT operating in the forward-active region at 27deg C</p>    
+            Ic:(uA) <input id ="transconductance_gm_Ic" type="text"><br>
+            
+            <button onclick="transconductance_gm()">Calculate</button><br>
+            gm:(mA/V) <input id ="transconductance_gm_ans_gm" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="transconductancefet">
+            <p>What is the device transconductance, gm, in mA/V for a FET operating in saturation</p>    
+            Id:(uA) <input id ="transconductance_fet_Id" type="text"><br>
+            Von=Vgs-Vt: (mV) <input id ="transconductance_fet_Von" type="text"><br>
+            <button onclick="transconductance_fet()">Calculate</button><br>
+            gm:(mA/V) <input id ="transconductance_fet_ans" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="backgate_transconductance">
+        
+            <p>backgate transconductance(GMB) - nmos/pmos</p>
+            Id: (uA) <input id="bTrans_Id" type="text"><br>
+            Vsb: (V) <input id="bTrans_Vsb" type="text"><br>
+            W/L: (int) <input id="bTrans_wl" type="text"><br>
+            K'n:(uA/V^2) <input value="100" id ="bTrans_kn" type="text"><br>
+            Y:(V^.5) <input id="bTrans_y" value=".5" type="text"><br>
+            2&Phi;f: (Volts)<input id="bTrans_phi" value=".6" type="text"><br>
+
+            <button onclick="bTrans()">Calculate</button><br>
+            <p>What is the back-gate transconductance, gmb, in mA/V for an MOS FET operating in saturation?<br>
+            gmb: (mA/V) <input id ="bTrans_ans_gmb" type="text"></p>
+
+            <hr>
+        </div>
+
+        <div id="outputR">
+            <p>What is the output resistance, rds, in kOhm for an MOS FET operating in saturation</p>    
+            Id:(uA) <input id ="rds_Id" type="text"><br>
+            Lamda <input id ="rds_lamda" type="text"><br>
+
+            <button onclick="rds()">Calculate</button><br>
+            Rds: (kOhm) <input id ="rds_ans_rds" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="base2emitter">
+            <p>What is the base-to-emitter resistance, r*pi, in kOhm for an BJT operating in the forward-active region at 27deg C</p>    
+            Ic:(uA) <input id ="base2emitterR_Ic" type="text"><br>
+            Beta <input id ="base2emitterR_beta" type="text"><br>
+
+            <button onclick="base2emitterR()">Calculate</button><br>
+            Rds: (kOhm) <input id ="base2emitterR_ans" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="PNPBJT">
+            <p>What is the open-circuit voltage gain, uf, in V/V for an BJT operating in the forward-active region at 27deg C</p>    
+            Ic (uA) <input id ="PNPBJT_Ic" type="text"><br>
+            B: <input id ="PNPBJT_B" type="text"><br>
+            VA(V): <input id ="PNPBJT_VA" type="text"><br>
+            <button onclick="PNPBJT()">Calculate</button><br>
+            Open Circut voltage gain:(V/V) <input id ="PNPBJT_ans_openGain" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="c2ePNP">
+            <p>What is the collector-to-emitter resistance, ro, in kOhm for an PNP/NPN BJT operating in the forward-active region at 27deg C</p>    
+            Ic (uA) <input id ="c2ePNP_Ic" type="text"><br>
+            B: <input id ="c2ePNP_B" type="text"><br>
+            VA(V): <input id ="c2ePNP_VA" type="text"><br>
+            <button onclick="c2ePNP()">Calculate</button><br>
+            collector-to-emitter resistance, ro(kOhm): <input id ="c2ePNP_ans_R" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="nmos">
+            <p>NMOS FET</p>    
+            Id(uA): <input id ="nmos_id" type="text"><br>
+            Von = (Vgs -Vt):(mV) <input id ="nmos_Von" type="text"><br>
+            Lamda: <input id ="nmos_lamda" type="text"><br>
+            <button onclick="nmos()">Calculate</button><br>
+            open-circut voltage gain of nmosfet in saturation(V/V): <input id ="nmos_ans_ogain" type="text"><br>
+            <br>
+            <hr>
+        </div>
+
+        <div id="Bias_4R_PNP_wo_RE_bypass_small">
+        
+            <p>BJT Biased with 4 Resistor</p>
+            <img id="BJTImgSwap" src="assets/Bias_4R_PNP_wo_RE_bypass_small.jpg"><br>
+            Vcc: (Volts) <input id ="Bias_4R_PNP_wo_RE_bypass_small_Vcc" type="text"><br>
+            Rb1: (kohm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_Rb1" type="text"><br>
+            Rb2: (kOhm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_Rb2" type="text"><br>
+            Rc: (kohm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_Rc" type="text"><br>
+            Re: (kohm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_Re" type="text"><br>
+            Beta: <input id ="Bias_4R_PNP_wo_RE_bypass_small_Beta" type="text"><br>
+            Is PNP?: <input checked type="checkbox" id="BJTBias4R" name="xxx" onchange="BJTImgSwap();" /><br>
+            <i>If checked, Q1 is PNP.</i>  <br>
+
+            <button onclick="Bias_4R_PNP_wo_RE_bypass_small()">Calculate</button><br>
+            <p>For the BJT bias circut shown, what is the emitter voltage(Ve) in volts? <br>
+            Ve: (Volts) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_emitterV" type="text"><br></p>
+            <p>For the BJT bias circuit shown, what value of Rc in kilohms is needed to allow the maximum possible peak-to-peak signal swing on the collector without clipping? <br>
+            Rc: (kOhm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_Rc" type="text"><br></p>
+            <p>For the BJT bias circuit shown, what is the base current, Ib, in microamps? <br>
+            Ib: (uA) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_Ib" type="text"><br></p>
+            
+            
+            <hr>
+        </div>
+
+        <div id="Bias_4R_PNP_wo_RE_bypass_small">
+        
+            <p>MOS biased with 4 Resistor</p>
+            <img id="BJTImgSwap" src="assets/Bias_4R_PMOS_wo_RS_bypass_small.jpg"><br>
+            drain bias current: (mA) <input id ="Mosfet4R_Idrain" type="text"><br>
+            Vdd:(Volts) <input id ="Mosfet4R_Vdd" type="text"><br>
+            Rg1: (kohm) <input id ="Mosfet4R_Rg1" type="text"><br>
+            Rg2: (kOhm) <input id ="Mosfet4R_Rg2" type="text"><br>
+            Vt: (Volts) <input id ="Mosfet4R_Vt" type="text"><br>
+            Von: (Volts) <input id ="Mosfet4R_Von" type="text"><br>
+            
+            Is PMOS?: <input checked type="checkbox" id="Mosfet4R_M1" name=" onchange=BJTImgSwap();" /><br>
+            <i>If checked, Q1 is PNP.</i>  <br>
+
+            <button onclick="Mosfet4R()">Calculate</button><br>
+            <p>For the MOSFET bias circut show, whant is the value of Rs in kohm <br>
+            Rs: (kOhm) <input id ="Mosfet4R_ans_Rs" type="text"><br></p>
+            
+            
+            <hr>
+        </div>
+        <div id="2RBJT">
+            <p>BJT With 2 Resistors</p>
+            <img id="2RBJT_Img" src="assets/Bias_2R_NPN_wo_RB_small.jpg"><br>
+            Vcc: (Volts) <input id ="2RBJT_Vcc" type="text"><br>
+            Vee: (Volts) <input id ="2RBJT_Vee" type="text"><br>
+            Vb: (Volts) <input id ="2RBJT_Vb" type="text"><br>
+            Rc: (kohm) <input id ="2RBJT_Rc" type="text"><br>
+            Re: (kohm) <input id ="2RBJT_Re" type="text"><br>
+            Beta: <input id ="2RBJT_Beta" type="text"><br>
+            Is PNP?: <input type="checkbox" id="2RBJT_Q1" name="xxx" onchange="BJTSwap_2R()" /><br>
+            <i>If checked, Q1 is PNP.</i>  <br>
+
+            <button onclick="BiPolar_2R()">Calculate</button><br>
+            <p>For the BJT bias circut shown, what is the emitter voltage(Ve) in volts? <br>
+            Ve: (Volts) <input id ="B2RBJT_ans_emitterV" type="text"><br>
+            Due to <a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic">Floats</a>, this will output <bold>zero</bold> as a very tiny decimal, ie(-8.881784197001252e-16). <br></p>
+                
+            <hr>
+        </div>
+
+        <div id="MOS2R">
+            <p>MOSFET With 2 Resistors</p>
+            <P>this one has issues</P>
+            <img id="MOS2R_Img" src="assets/Bias_2R_PMOS_small.jpg"><br>
+            Vdd: (Volts) <input id ="MOS2R_Vdd" type="text"><br>
+            Vss: (Volts) <input id ="MOS2R_Vss" type="text"><br>
+            Vg: (Volts) <input id ="MOS2R_Vg" type="text"><br>
+            Rd: (kohm) <input id ="MOS2R_Rd" type="text"><br>
+            Rs: (kohm) <input id ="MOS2R_Rs" type="text"><br>
+            Vt: (Volts) <input value="-.5" id ="MOS2R_Vt" type="text"><br>
+            Von:(Volts) <input id ="MOS2R_Von" type="text"><br>
+            Is PMOS?: <input checked type="checkbox" id="MOS2R_M1" name="xxx" onchange="MOS2R_Swap()" /><br>
+            <i>If checked, Q1 is PMOS.</i>  <br>
+
+            <button onclick="Mosfet2R()">Calculate</button><br>
+            <p>For the MOSFET bias circuit shown, what value of Rd in kilohms is needed to allow the maximum possible peak-to-peak signal swing on the drain without clipping?<br>
+            Rd: (kOhm) <input id ="MOS2R_ans_Rd" type="text"><br></p>
+            <p>For the MOSFET bias circuit shown, what is the source current, Is, in milliamps? Assume that the transistor is in the saturation region.<br>
+            Is: (mA) <input id ="MOS2R_ans_Is" type="text"><br></p>
+            <hr>
+        </div>
+
+        <div id="NPNCommonEmitter">
+        
+            <p>NPN Common Emitter(With Small Load)</p>
+            <img src="assets/CE_NPN_with_RE_R_load_small.jpg"><br>
+            Rc: (kOhm) <input id ="NPNCommonEmitter_Rc" type="text"><br>
+            Re: (kOhm) <input id ="NPNCommonEmitter_Re" type="text"><br>
+            Rb: (kOhm) <input id ="NPNCommonEmitter_Rb" type="text"><br>
+            Ic: (uA) <input id ="NPNCommonEmitter_Ic" type="text"><br>
+            B: (Beta) <input id ="NPNCommonEmitter_Beta" type="text"><br>
+
+            <button onclick="NPNCommonEmitter()">Calculate</button><br>
+            <p>What is the low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
+            Low Frequency Input Resistance: (kOhm) <input id ="NPNCommonEmitter_ans_inputR" type="text"><br></p>
+            
+            <p>What is the low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
+            Low Frequency output Resistance: (Ohm) <input id ="NPNCommonEmitter_ans_outputR" type="text"><br></p>
+
+            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C <br>
+            Low Frequency Voltage Gain <input id ="NPNCommonEmitter_ans_outputVgain" type="text"><br></p>
+
+            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C, where Ro is between Q1 and Re <br>
+            Low Frequency Voltage Gain <input id ="NPNCommonEmitter_ans_outputVgain_re" type="text"><br></p>
+<!--This can use a swapadoodle feature..nvm no time-->
+            <hr>
+        </div>
+
+
+        <div id="CE_PNP_with_RE_R_load_small">
+        
+            <p>PNP Common Emitter(With Small Load)</p>
+            <img src="assets/CE_PNP_with_RE_R_load_small.jpg"><br>
+            Rc: (kOhm) <input id ="CE_PNP_with_RE_R_load_small_Rc" type="text"><br>
+            Re: (kOhm) <input id ="CE_PNP_with_RE_R_load_small_Re" type="text"><br>
+            Rb: (kOhm) <input id ="CE_PNP_with_RE_R_load_small_Rb" type="text"><br>
+            Ic: (uA) <input id ="CE_PNP_with_RE_R_load_small_Ic" type="text"><br>
+            B: (Beta) <input id ="CE_PNP_with_RE_R_load_small_Beta" type="text"><br>
+
+            <button onclick="CE_PNP_with_RE_R_load_small()">Calculate</button><br>
+            <p>What is the low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
+            Low Frequency Input Resistance: (kOhm) <input id ="CE_PNP_with_RE_R_load_small_ans_inputR" type="text"><br></p>
+            
+            <p>What is the low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
+            <i>Note:  The Diagram is slightly incorrect for this variation.  Vo and Ro are between Q1 and Re.  </i><br>
+            Low Frequency output Resistance: (Ohm) <input id ="CE_PNP_with_RE_R_load_small_ans_outputR" type="text"><br></p>
+
+            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C **  <br>
+            Low Frequency voltage gain:  <input id ="CE_PNP_with_RE_R_load_small_ans_outputvgain" type="text"><br></p>
+
+            <hr>
+        </div>
+
+        <div id="CD_PMOS">
+        
+            <p>CD PMOS with RD_R Small Load</p>
+            <img src="assets/CD_PMOS_with_RD_R_load_small.jpg"><br>
+            Rd: (kOhm) <input id ="CD_PMOS_Rd" type="text"><br>
+            Rs: (kOhm) <input id ="CD_PMOS_Rs" type="text"><br>
+            Rg: (kOhm) <input id ="CD_PMOS_Rg" type="text"><br>
+            WL:  <input id ="CD_PMOS_wl" type="text"><br>
+            Id: (uA) <input id ="CD_PMOS_Id" type="text"><br>
+            VTP: <input value="-.5" id ="CD_PMOS_vtp" type="text"><br>
+            k'p: <input value="40" id ="CD_PMOS_kp" type="text"><br>
+            lamda: <input value="0" id ="CD_PMOS_lamda" type="text"><br>
+
+            <button onclick="CD_PMOS_calc()">Calculate</button><br>
+            <p>What is the low frequency output resistance, Ro, in ohms for the amplifier shown<br>
+            Low Frequency Output Resistance, Ro: (kOhm) <input id ="CD_PMOS_ans_Ro" type="text"><br></p>
+
+            <hr>
+        </div>
+
+
+        <div id="CGMOS">
+        
+            <p>CG_MOS_with_RG_R_load_small</p>
+            <img id="MosIMGSwap" src="assets/CG_NMOS_with_RG_R_load_small.jpg"><br>
+            Rd: (kohm) <input id ="CGMOS_Rd" type="text"><br>
+            Rs: (kohm) <input id ="CGMOS_Rs" type="text"><br>
+            Rg: (kOhm) <input id ="CGMOS_Rg" type="text"><br>
+            WL: <input id ="CGMOS_WL" type="text"><br>
+            Id: (uA) <input id ="CGMOS_Id" type="text"><br>
+            VTN: (Volts)<input value=".5" id ="CGMOS_VTN" type="text"><br>
+            k'n: (uA/V^2)<input value="100" id ="CGMOS_kn" type="text"><br>
+            lamda: <input value=".10" id ="CGMOS_lamda" type="text"><br>
+            Is NMOS?: <input checked type="checkbox" id="MosIMGSwap_check" name="xxx" onchange="MosIMGSwap();" /><br>
+            <i>If checked, M1 is <bold>NMOS.</bold></i>  <br>
+
+            <button onclick="cgmos()">Calculate</button><br>
+            <p>What is the low frequency input resistance(Ri) <br>
+            Ri: (Ohm) <input id ="CGMOS_ans_InputR" type="text"><Bold>CAUTION: ANS IN OHMS</Bold><br></p>
+            <p>What is the low frequency output resistance(Ro)<br>
+            Ro: (kOhm) <input id ="CGMOS_ans_OutputR" type="text"><br></p>
+            <p>What is the low frequency voltage Gain?<br>
+            Gain: (V/V) <input id ="CGMOS_ans_gainV" type="text"><br></p>
+
+            <hr>
+        </div>
+
+        <div id="CBBJT">
+        
+            <p>CB_BJT_with_RB_R_load_small</p>
+            <img id="CBBJT_Img" src="assets/CB_PNP_with_RB_R_load_small.jpg"> <img id="CBBJT_Img" src="assets/CB_NPN_with_RB_R_load_small.jpg"><br>
+            Rc: (kohm) <input id ="CBBJT_Rc" type="text"><br>
+            Re: (kohm) <input id ="CBBJT_Re" type="text"><br>
+            Rb: (kOhm) <input id ="CBBJT_Rb" type="text"><br>
+            Ic:(uA) <input id ="CBBJT_Ic" type="text"><br>
+            Beta: <input id ="CBBJT_Beta" type="text"><br>
+            VA: (Volts)<input id ="CBBJT_VA" type="text"><br>
+            <!--Is NMOS?: <input checked type="checkbox" id="MosIMGSwap_check" name="xxx" onchange="MosIMGSwap();" /><br>
+            <i>If checked, M1 is <bold>NMOS.</bold></i>  <br>-->
+
+            <button onclick="CBBJT()">Calculate</button><br>
+            <p>What is the low frequency input resistance(Ri) <br>
+            Ri: (Ohm) <input id ="CBBJT_ans_InputR" type="text"><Bold>CAUTION: ANS IN OHMS</Bold><br></p>
+            <p>What is the low frequency output resistance(Ro)<br>
+            Ro: (kOhm) <input id ="CBBJT_ans_OutputR" type="text"><br></p>
+            <p>What is the low frequency voltage Gain?<br>
+            Gain: (V/V) <input id ="CBBJT_ans_gainV" type="text"><br></p>
+
+            <hr>
+        </div>
+
+
+        <div id="lfGainWVoltage">
+
+            <p>Low Frequency Gain - Estimate</p>
+            <img src="assets/CE_PNP_with_RE_R_load_small.jpg"> <img src="assets/CB_PNP_with_RB_R_load_small.jpg"> <img src="assets/CG_NMOS_with_RG_R_load_small.jpg"><br>
+            Rc OR in mosfet(Rd): (mV) <input id ="lfGainWVoltage_Rc" type="text"><br>
+            Re OR in mosfet(Rs): (mV) <input id ="lfGainWVoltage_Re" type="text"><br>
+
+
+            <button onclick="lfGainWVoltage()">Calculate</button><br>
+            <p>Estimate the maximum low frequency voltage gain for the amplifier shown:<br>
+            Low Frequency Voltage Gain: (v/v) <input id ="lfGainWVoltage_ans_lfgain" type="text"><br></p>
+            
+
+            <hr>
+        </div>
+
+
+
+
+
+        <br>
+        <br>
+        <br>
+        <hr>
+        <center>2025 - Note this was written a number of years before publishing, results may incorrect.  </center>
+
+
+<!-- 
+Do not go gentle into that good night
+Dylan Thomas
+Do not go gentle into that good night,
+Old age should burn and rave at close of day; Rage, rage against the dying of the light.
+Though wise men at their end know dark is right, Because their words had forked no lightning they Do not go gentle into that good night.
+Good men, the last wave by, crying how bright Their frail deeds might have danced in a green bay, Rage, rage against the dying of the light.
+Wild men who caught and sang the sun in flight, And learn, too late, they grieved it on its way, Do not go gentle into that good night.
+Grave men, near death, who see with blinding sight Blind eyes could blaze like meteors and be gay, Rage, rage against the dying of the light.
+And you, my father, there on the sad height, Curse, bless, me now with your fierce tears, I pray. Do not go gentle into that good night.
+Rage, rage against the dying of the light.
+-->
+
+<!-- Written for the day I go back to get my PE-->
+
+</body >
+</html>
