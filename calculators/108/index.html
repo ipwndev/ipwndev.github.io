@@ -746,7 +746,7 @@
 
 
         <div id="transconductance_gm">
-            <p>What is the transconductance, gm, in mA/V for an BJT operating in the forward-active region at 27deg C</p>    
+            <p>The transconductance, gm, in mA/V for an BJT operating in the forward-active region at 27deg C</p>    
             Ic:(uA) <input id ="transconductance_gm_Ic" type="text"><br>
             
             <button onclick="transconductance_gm()">Calculate</button><br>
@@ -756,7 +756,7 @@
         </div>
 
         <div id="transconductancefet">
-            <p>What is the device transconductance, gm, in mA/V for a FET operating in saturation</p>    
+            <p>Device transconductance, gm, in mA/V for a FET operating in saturation</p>    
             Id:(uA) <input id ="transconductance_fet_Id" type="text"><br>
             Von=Vgs-Vt: (mV) <input id ="transconductance_fet_Von" type="text"><br>
             <button onclick="transconductance_fet()">Calculate</button><br>
@@ -776,14 +776,14 @@
             2&Phi;f: (Volts)<input id="bTrans_phi" value=".6" type="text"><br>
 
             <button onclick="bTrans()">Calculate</button><br>
-            <p>What is the back-gate transconductance, gmb, in mA/V for an MOS FET operating in saturation?<br>
+            <p>Back-gate transconductance, gmb, in mA/V for an MOS FET operating in saturation<br>
             gmb: (mA/V) <input id ="bTrans_ans_gmb" type="text"></p>
 
             <hr>
         </div>
 
         <div id="outputR">
-            <p>What is the output resistance, rds, in kOhm for an MOS FET operating in saturation</p>    
+            <p>Output resistance, rds, in kOhm for an MOS FET operating in saturation</p>    
             Id:(uA) <input id ="rds_Id" type="text"><br>
             Lamda <input id ="rds_lamda" type="text"><br>
 
@@ -794,7 +794,7 @@
         </div>
 
         <div id="base2emitter">
-            <p>What is the base-to-emitter resistance, r*pi, in kOhm for an BJT operating in the forward-active region at 27deg C</p>    
+            <p>Base-to-emitter resistance, r*pi, in kOhm for an BJT operating in the forward-active region at 27deg C</p>    
             Ic:(uA) <input id ="base2emitterR_Ic" type="text"><br>
             Beta <input id ="base2emitterR_beta" type="text"><br>
 
@@ -805,7 +805,7 @@
         </div>
 
         <div id="PNPBJT">
-            <p>What is the open-circuit voltage gain, uf, in V/V for an BJT operating in the forward-active region at 27deg C</p>    
+            <p>Open-circuit voltage gain, uf, in V/V for an BJT operating in the forward-active region at 27deg C</p>    
             Ic (uA) <input id ="PNPBJT_Ic" type="text"><br>
             B: <input id ="PNPBJT_B" type="text"><br>
             VA(V): <input id ="PNPBJT_VA" type="text"><br>
@@ -816,7 +816,7 @@
         </div>
 
         <div id="c2ePNP">
-            <p>What is the collector-to-emitter resistance, ro, in kOhm for an PNP/NPN BJT operating in the forward-active region at 27deg C</p>    
+            <p>Collector-to-emitter resistance, ro, in kOhm for an PNP/NPN BJT operating in the forward-active region at 27deg C</p>    
             Ic (uA) <input id ="c2ePNP_Ic" type="text"><br>
             B: <input id ="c2ePNP_B" type="text"><br>
             VA(V): <input id ="c2ePNP_VA" type="text"><br>
@@ -851,11 +851,11 @@
             <i>If checked, Q1 is PNP.</i>  <br>
 
             <button onclick="Bias_4R_PNP_wo_RE_bypass_small()">Calculate</button><br>
-            <p>For the BJT bias circut shown, what is the emitter voltage(Ve) in volts? <br>
-            Ve: (Volts) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_emitterV" type="text"><br></p>
-            <p>For the BJT bias circuit shown, what value of Rc in kilohms is needed to allow the maximum possible peak-to-peak signal swing on the collector without clipping? <br>
+            <p><br>
+            Emitter Voltage, Ve: (Volts) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_emitterV" type="text"><br></p>
+            <p>Value of Rc in kilohms needed to allow the maximum possible peak-to-peak signal swing on the collector without clipping: <br>
             Rc: (kOhm) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_Rc" type="text"><br></p>
-            <p>For the BJT bias circuit shown, what is the base current, Ib, in microamps? <br>
+            <p>Base current, Ib, in microamps? <br>
             Ib: (uA) <input id ="Bias_4R_PNP_wo_RE_bypass_small_ans_Ib" type="text"><br></p>
             
             
@@ -936,16 +936,16 @@
             B: (Beta) <input id ="NPNCommonEmitter_Beta" type="text"><br>
 
             <button onclick="NPNCommonEmitter()">Calculate</button><br>
-            <p>What is the low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
+            <p>low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
             Low Frequency Input Resistance: (kOhm) <input id ="NPNCommonEmitter_ans_inputR" type="text"><br></p>
             
-            <p>What is the low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
+            <p>low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
             Low Frequency output Resistance: (Ohm) <input id ="NPNCommonEmitter_ans_outputR" type="text"><br></p>
 
-            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C <br>
+            <p>low frequency voltage gain for the amplifier shown at 27deg C <br>
             Low Frequency Voltage Gain <input id ="NPNCommonEmitter_ans_outputVgain" type="text"><br></p>
 
-            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C, where Ro is between Q1 and Re <br>
+            <p>low frequency voltage gain for the amplifier shown at 27deg C, where Ro is between Q1 and Re <br>
             Low Frequency Voltage Gain <input id ="NPNCommonEmitter_ans_outputVgain_re" type="text"><br></p>
 <!--This can use a swapadoodle feature..nvm no time-->
             <hr>
@@ -963,14 +963,14 @@
             B: (Beta) <input id ="CE_PNP_with_RE_R_load_small_Beta" type="text"><br>
 
             <button onclick="CE_PNP_with_RE_R_load_small()">Calculate</button><br>
-            <p>What is the low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
+            <p>low frequency input resistance, Ri, in kOhm for the amplifier shown at 27deg C(Vt=26mV)  <br>
             Low Frequency Input Resistance: (kOhm) <input id ="CE_PNP_with_RE_R_load_small_ans_inputR" type="text"><br></p>
             
-            <p>What is the low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
+            <p>low frequency output resistance, Ro, in ohm for the amplifier shown at 27deg C <br>
             <i>Note:  The Diagram is slightly incorrect for this variation.  Vo and Ro are between Q1 and Re.  </i><br>
             Low Frequency output Resistance: (Ohm) <input id ="CE_PNP_with_RE_R_load_small_ans_outputR" type="text"><br></p>
 
-            <p>What is the low frequency voltage gain for the amplifier shown at 27deg C **  <br>
+            <p>low frequency voltage gain for the amplifier shown at 27deg C **  <br>
             Low Frequency voltage gain:  <input id ="CE_PNP_with_RE_R_load_small_ans_outputvgain" type="text"><br></p>
 
             <hr>
@@ -990,7 +990,6 @@
             lamda: <input value="0" id ="CD_PMOS_lamda" type="text"><br>
 
             <button onclick="CD_PMOS_calc()">Calculate</button><br>
-            <p>What is the low frequency output resistance, Ro, in ohms for the amplifier shown<br>
             Low Frequency Output Resistance, Ro: (kOhm) <input id ="CD_PMOS_ans_Ro" type="text"><br></p>
 
             <hr>
@@ -1037,11 +1036,11 @@
             <i>If checked, M1 is <bold>NMOS.</bold></i>  <br>-->
 
             <button onclick="CBBJT()">Calculate</button><br>
-            <p>What is the low frequency input resistance(Ri) <br>
+            <p>low frequency input resistance(Ri) <br>
             Ri: (Ohm) <input id ="CBBJT_ans_InputR" type="text"><Bold>CAUTION: ANS IN OHMS</Bold><br></p>
-            <p>What is the low frequency output resistance(Ro)<br>
+            <p>low frequency output resistance(Ro)<br>
             Ro: (kOhm) <input id ="CBBJT_ans_OutputR" type="text"><br></p>
-            <p>What is the low frequency voltage Gain?<br>
+            <p>low frequency voltage Gain<br>
             Gain: (V/V) <input id ="CBBJT_ans_gainV" type="text"><br></p>
 
             <hr>

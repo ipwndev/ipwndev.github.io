@@ -1,0 +1,1011 @@
+<html>
+<head>
+    <title>AC Power Systems</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109081589-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-109081589-1');
+    </script>
+    <style>
+        body {font-family: Arial;}
+        
+        /* Style the tab */
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+        
+        /* Style the buttons inside the tab */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+        }
+        
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+        
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+        /* Smith Chart */
+        #chart {
+            width: 800px;
+            height: 400px;
+        }
+        </style>
+        <script>
+            //User Interface Crap(UIC)
+            function openCity(evt, cityName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(cityName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+            </script>
+<script>
+//the yeehaw math library
+//Constants
+var pi = Math.PI; //pi in radians
+var c = 299792458; //speed of light in ms
+var metricRanges = [
+  { divider: 1e18 , suffix: 'E' },
+  { divider: 1e15 , suffix: 'P' },
+  { divider: 1e12 , suffix: 'T' },
+  { divider: 1e9 , suffix: 'G' },
+  { divider: 1e6 , suffix: 'M' },
+  { divider: 1e3 , suffix: 'k' },
+  { divider: 1 , suffix: '' },
+  { divider: 1e-2 , suffix: 'c' },
+  { divider: 1e-3 , suffix: 'm' },
+  { divider: 1e-6 , suffix: 'u' },
+  { divider: 1e-9 , suffix: 'n' },
+  { divider: 1e-12 , suffix: 'p' }
+];
+
+//Basic Manipulations
+function nPi(value){
+    return value*pi;
+}
+function toDegrees(angle) {
+    return angle * (180 / pi); //rad to deg
+}
+function toRadians(angle) {    
+    return angle * (pi / 180); //deg to rad
+}
+function toCartesian(radius,degrees){
+    //aka rectangular form, [real, imag]
+    //radius*Math.cos(toRadians(degrees)) + " +j" + radius*Math.sin(toRadians(degrees));
+    return [radius*Math.cos(toRadians(degrees)), radius*Math.sin(toRadians(degrees))];
+}
+function toPolar(x,y){
+    var r = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    var theta = Math.atan2(y,x);
+    return [r, toDegrees(theta)]; //export as a motha fuckin array
+    //return(r + ", " + toDegrees(theta)+"°");
+}
+function toWavelength(frequency){
+    return c / frequency; //returns in meters
+}
+function toFrequency(wavelength){
+    return c / wavelength; //returns in Hz
+}
+function toMetric(number) {
+  //Shortens numbers to strings with metric prefixes
+  for (var i = 0; i < metricRanges.length; i++) {
+    if (Math.abs(number) >= metricRanges[i].divider) {
+      return (number / metricRanges[i].divider).toString() + metricRanges[i].suffix;
+    }
+  }
+  return number.toString();
+}
+function toNumber(string){
+    //convert things with their metric prefixes to their numeric values. Function broken with Negative values
+    if (typeof string === 'string' || string instanceof String){
+        var num = string.replace(/[^\d.-]/g, '');
+        var suffix = string.split('.').join('').replace(/[0-9]/g, '');
+        for (var i = 0; i < metricRanges.length; i++) {
+          if (suffix === metricRanges[i].suffix){
+            return num * metricRanges[i].divider;
+          }
+        }
+    }else{
+        return string;
+    }
+}
+function divideCartisian(Num, Denom){
+    //divide two cartisian values and return an single array
+    var result = makeReal(Num, Denom);
+    var real = result.NumeratorReal/result.Denominator;
+    var complex = result.NumeratorImaginary/result.Denominator;
+    return [real, complex];
+}
+function makeReal(Num, Denom){
+    //[Real, Imaginary]
+    //d !== 0 Removes complex number from denom
+    var output = {};
+    output.NumeratorReal = (Num[0] * Denom[0]) + (Num[1] * Denom[1]); //numerator real
+    output.NumeratorImaginary = (Num[1]*Denom[0] - Num[0]*Denom[1]); //numerator imaginary
+    output.Denominator = (Math.pow(Denom[0],2) + Math.pow(Denom[1],2)); //denominator
+    return output;
+}
+function foilImaginary(groupA, groupB){
+    //(a + bi)(c + di)
+    var real = ( groupA[0] * groupB[0] ) - ( groupA[1] * groupB[1] );
+    var imag = ( groupA[0] * groupB[1] ) + ( groupA[1] * groupB[0] );
+    return [real, imag];
+}
+function conj(complexstr){
+    //expects complex string such as 3 - 4i or 6 + 5i
+    let z = complexstr;
+    var l = complexstr.length;
+    var i;
+    if (complexstr.indexOf('+') != -1) {
+        i = complexstr.indexOf('+');
+        s = complexstr.replace('+', '-');
+    }
+    else {
+        i = complexstr.indexOf('-');
+        s = complexstr.replace('-', '+');
+    }
+    return s; //return compelx conj as string
+}
+function conjugate(input){
+    //[real, imaginary]
+    //apply conjugate function to standard real/imag pair
+    return [input[0], (input[1] * -1) ];
+}
+function parallel(r1, r2){
+    //parallel circut, real comp only
+    return (r1 * r2) / (r1 + r2);
+}
+function complex_parallel([R1r, R1j],[R2r, R2j]){
+    //two complex loads in parallel.
+    function sq(x){return x*x}
+    fh = document.forms[0];
+    rr1 = R1r;
+    xx1 = R1j;
+    rr2 = R2r;
+    xx2 = R2j;
+    rr = rr1 - (-1) * rr2;
+    xx = xx1 - (-1) * xx2;
+    zz = Math.sqrt(sq(rr) - (-1) * sq(xx));
+   // fh.zep.value = Math.atan(xx / rr) * 180 / Math.PI;
+    t1 = (rr1 * rr2 - xx1 * xx2) * (rr1 - (-1) * rr2);
+    t2 = (xx1 * rr2 - (-1) * xx2 * rr1) * (xx1 - (-1) * xx2);
+    t3 = sq(rr1 - (-1) * rr2) - (-1) * sq(xx1 - (-1) * xx2);
+    rrp = (t1 - (-1) * t2) / t3; //need
+   // fh.zerp.value = rrp; //need
+    t4 = (xx1 * rr2 - (-1) * xx2 * rr1) * (rr1 - (-1) * rr2);
+    t5 = (rr1 * rr2 - xx1 * xx2) * (xx1 - (-1) * xx2);
+    t6 = sq(rr1 - (-1) * rr2) - (-1) * sq(xx1 - (-1) * xx2);
+    xxp = (t4 - t5) / t6; //needed
+   // fh.zexp.value = xxp; //need
+   // fh.zeap.value = Math.sqrt(sq(rrp) - (-1) * sq(xxp));//need
+   // fh.zepp.value = Math.atan(xxp / rrp) * 180 / Math.PI //need
+    
+    return [rrp, xxp];
+}
+//Ra,Rb,Rc are external points.  Rx Ry, Rz are inner resistors in Wye.  R1, R2, R3 are Points in Delta 
+function toWye(R1, R2, R3){
+    var delta = {};
+    delta["Rx"] = (R2 * R3) / (R1 + R2 + R3);
+    delta["Ry"] = (R1 * R3) / (R1 + R2 + R3);
+    delta["Rz"] = (R1 * R2) / (R1 + R2 + R3);
+    return delta;
+}
+function balanced_toWye(delta){
+    return delta/3;
+}
+function toDelta(Rx, Ry, Rz){
+    var wye = {};
+    wye["R1"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Rx;
+    wye["R2"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Ry;
+    wye["R3"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Rz;
+    return wye;
+}
+function balanced_toDelta(wye){
+    return 3*wye;
+}
+function IsLeadLag(powerfactor){
+    //Pass in Power Factor, Determine if Leading or Lagging
+    var pf = Math.sign(powerfactor);
+    if (pf > 0){
+        return "Lagging"
+    }
+    if (pf < 0){
+        return "Leading"
+    }
+    if (pf === 0){
+        return "Unity"
+    }else{
+        return "Unknown"
+    }
+}
+//Begin Course Specific Notes
+//EEE130
+function one(){
+    var hz = toNumber($("#one_Hz").val()),
+        gen = toNumber($("#one_kVA").val()),
+        load_alpha = toNumber($("#one_MVA").val()),
+        v = toNumber($("#one_terminal").val()),
+        pf = toNumber($("#one_pf").val());
+    
+    var total_active_power = load_alpha * pf; //Watts
+    var total_reactive_power = load_alpha * 0.6; //MVAR... unknown where this .06 comes from
+
+    var angle = toDegrees(Math.acos(pf));
+
+    var current = (load_alpha) / (Math.sqrt(3) * v); 
+    var s = (load_alpha) / (Math.sqrt(3) * v); //power at angle
+    $("#one_a").val(s.toFixed(4) + " < -" + angle.toFixed(4) + "");
+
+    var z = (v / Math.sqrt(3)) / s;
+    $("#one_b").val(toCartesian(z,angle)[0].toFixed(4) + " + j" + toCartesian(z,angle)[1].toFixed(4) + "");
+
+}
+function two(){
+    var hz = toNumber($("#two_Hz").val()),
+        wyer = toNumber($("#two_wyeA").val()),
+        wyej = toNumber($("#two_wyeB").val()),
+        deltar = toNumber($("#two_deltaA").val()),
+        deltaj = toNumber($("#two_deltaB").val()),
+        v = toNumber($("#two_Va_a").val()),
+        vj = toNumber($("#two_Va_b").val());
+        
+        //a
+        var load1_wye = toCartesian(wyer, wyej);
+        //delta to wye the second load
+        var load2_wyer = balanced_toWye(deltar);
+        var load2_wyej = deltaj;
+        var load2_wye = toCartesian(load2_wyer, load2_wyej);
+
+        var parallel_z = complex_parallel([load1_wye[0], load1_wye[1]],[load2_wye[0], load2_wye[1]]);
+        var parallel_z_polar = toPolar(parallel_z[0],parallel_z[1]);
+        $("#two_a").val(parallel_z_polar[0].toFixed(4) + " <" + parallel_z_polar[1].toFixed(4) + "");
+
+        //b
+        //Va = 2R * Ia
+        var volts_over_r = makeReal([v,vj],[parallel_z[0],parallel_z[1]]);
+        var i_r = volts_over_r.NumeratorReal/volts_over_r.Denominator;
+        var i_j = volts_over_r.NumeratorImaginary/volts_over_r.Denominator;
+        var i = toPolar(i_r,i_j);
+        $("#two_b").val(i[0].toFixed(4) + " <" + i[1].toFixed(4) + "");
+        //c
+        // s = 3 * V * Ia conjugate
+        var voltage = toCartesian(v, vj);
+
+        var s_r = 3 * ( (voltage[0] * i_r) + (i_j * voltage[1]) );
+        var s_j = 3 * ( (-1 * voltage[0] * i_j) + (voltage[1] * i_j) );
+        var s = toPolar(s_r,s_j);
+        console.log(s[0].toFixed(4) + " <" + s[1].toFixed(4) + "");
+        $("#two_c").val(s_r.toFixed(4) + " + j" + s_j.toFixed(4) + " VA");
+}
+
+function three(){
+    var va_r = toNumber($("#three_va_r").val()),
+        va_j = toNumber($("#three_va_j").val()),
+        vb_r = toNumber($("#three_vb_r").val()),
+        vb_j = toNumber($("#three_vb_j").val()),
+        va_tx_r = toNumber($("#three_va_tx_r").val()),
+        va_tx_j = toNumber($("#three_va_tx_j").val()),
+        va_load_r = toNumber($("#three_load_tx_r").val()),
+        va_load_j = toNumber($("#three_load_tx_j").val()),
+        va1_tx_r = toNumber($("#three_va1_tx_r").val()),
+        va1_tx_j = toNumber($("#three_va1_tx_j").val()),
+        load_r = toNumber($("#three_load_r").val()),
+        load_j = toNumber($("#three_load_j").val());
+    
+        $("#three_ans1").val("err");
+        $("#three_ans2").val("err");
+        $("#three_ans3").val("err");
+}
+function four(){
+    var tx1 = toNumber($("#four_tx1").val()),
+        tx2 = toNumber($("#four_tx2").val()),
+        loadR = toNumber($("#four_loadR").val()),
+        loadA = toNumber($("#four_loadA").val()),
+        sourceV = toNumber($("#four_sourceV").val());
+    
+        var a = tx1 / tx2;
+
+        //secondary Current
+        var V2 = toCartesian((sourceV / a) , 0);
+        var load = toCartesian(loadR, loadA);
+
+        var I2 = divideCartisian(V2, load);
+        var I2_polar = toPolar(I2[0], I2[1]);
+
+        //primary current
+        var I1 = I2_polar[0] / a;
+
+        //input impedence Zin
+        var ZinNumerator = toCartesian((a * V2[0]),  (a * V2[1]));
+        var ZinDenomenator = toCartesian(I1, I2_polar[1]);  //assuming angle is ZERO... 
+
+        var Zin_Cartisian = divideCartisian(ZinNumerator,ZinDenomenator);
+        var Zin = toPolar(Zin_Cartisian[0], Zin_Cartisian[1]);
+
+        //Output Power
+        var s2 = V2[0] * I2_polar[0] //va
+        var p2 = s2 * Math.cos(toRadians(loadA)); //W
+
+        //Input Power
+        var s1 = sourceV * I1; //va
+        var p1 = s1 * Math.cos(toRadians(loadA)); //W
+
+        $("#four_ans_i2").val(I2_polar[0].toFixed(4) + " < " + I2_polar[1].toFixed(4) + " Ampere");
+        $("#four_ans_i1").val(I1.toFixed(4) + " < " + I2_polar[1].toFixed(4) + " Ampere");
+        $("#four_ans_input_r").val( Zin[0].toFixed(4) + " < " + Zin[1].toFixed(4) + " Ohms");
+        $("#four_ans_outputPWR").val(toMetric(s2.toFixed(3)) + "VA, " + (toMetric(p2.toFixed(2))) + "W");
+        $("#four_ans_inputPWR").val(toMetric(s1.toFixed(3)) + "VA, " + (toMetric(p1.toFixed(2))) + "W");      
+
+}
+function five(){
+    var load = toNumber($("#five_load").val()),
+        v = toNumber($("#five_v").val()),
+        internalR = toNumber($("#five_internalR").val());
+        
+        //turn ratio for MPT (Impedance matching)
+        var turns = Math.sqrt(internalR / load);
+        //values for current voltage and power at load at MPT
+        var I1 = v / (2 * internalR); //Ampere
+
+        var I2 = (turns * I1); 
+        var v2 = (turns * I1) * load;
+        var p2 = Math.pow(I2,2) * load;
+        $("#five_ans_a").val(turns.toFixed(4));
+        $("#five_ans_b").val(I2.toFixed(4) + "A, " + v2.toFixed(3) + "V, " + toMetric(p2.toFixed(5)) + "W");
+}
+function six(){
+    var kVA = toNumber($("#six_kVA").val()),
+        L1 = toNumber($("#six_L1").val()),
+        L2 = toNumber($("#six_L2").val())
+        Hz = toNumber($("#six_Hz").val()),
+        Rj = toNumber($("#six_Rj").val()),
+        Rr = toNumber($("#six_Rr").val());
+        
+        VoltageReg = kVA / L2;
+        
+        //.9 lag pf (a)
+        var theta_a = toDegrees(-1 * Math.acos(.9));
+        var V2_a = foilImaginary([Rr,Rj], toCartesian(VoltageReg,theta_a) );
+        V2_a[0] = V2_a[0] + L2;
+        Vreg_a = (100 * (V2_a[0] - L2) / L2).toFixed(2);
+
+        //0 unity pf (b)
+        var theta_b = toDegrees( Math.acos(1) );
+        var V2_b = foilImaginary([Rr,Rj], toCartesian(VoltageReg,theta_b) );
+        V2_b[0] = V2_b[0] + L2;
+        Vreg_b = (100 * (V2_b[0] - L2) / L2).toFixed(2);
+
+        //.9 lead pf (c)
+        var theta_c = toDegrees( Math.acos(.9) );
+        var V2_c = foilImaginary([Rr,Rj], toCartesian(VoltageReg,theta_c) );
+        V2_c[0] = V2_c[0] + L2;
+        Vreg_c = (100 * (V2_c[0] - L2) / L2).toFixed(2);
+
+        $("#six_ans_a").val(Vreg_a + "%, " + V2_a[0].toFixed(2)  + " +j" + V2_a[1].toFixed(2));
+        $("#six_ans_b").val(Vreg_b + "%, " + V2_b[0].toFixed(2)  + " +j" + V2_b[1].toFixed(2));
+        $("#six_ans_c").val(Vreg_c + "%, " + V2_c[0].toFixed(2)  + " +j" + V2_c[1].toFixed(2));
+}
+function seven(){
+    var R1_r = toNumber($("#seven_R1_r").val()),
+        R1_j = toNumber($("#seven_R1_j").val()),
+        R2_r = toNumber($("#seven_R2_r").val()),
+        R2_j = toNumber($("#seven_R2_j").val()),
+        Tx_h = toNumber($("#seven_Tx_h").val()),
+        Tx_l = toNumber($("#seven_Tx_l").val()),
+        Tx_l = toNumber($("#seven_Tx_Va").val()),
+        R3_r = toNumber($("#seven_R3_r").val()),
+        R3_j = toNumber($("#seven_R3_j").val()),
+        I2 = toNumber($("#seven_I2").val()),
+        I2_a = parseFloat($("#seven_I2_a").val()),
+        V2 = toNumber($("#seven_V2").val());
+
+        //find current and voltage at primary side
+        //kvl in loop 2 - right side (E2)
+        var Current_2 = toCartesian(I2, I2_a);
+        var E2_r = foilImaginary([R3_r,0],Current_2)[0] + V2;
+        var E2_j = foilImaginary([0,R3_j],Current_2)[1] + V2;
+        var E2 = [E2_r,E2_j];
+        var turns = Tx_h / Tx_l;
+        var E1 = foilImaginary([turns,0],E2);
+        var Iprime1 = foilImaginary([(Tx_l/ Tx_h),0], Current_2); 
+        var Izero =  divideCartisian(E1,complex_parallel([R2_r, 0],[0, R2_j]));
+        var kcl_i1 = [Iprime1[0] + Izero[0], Iprime1[1] + Izero[1]];
+        var V1 = foilImaginary([R1_r,R1_j], kcl_i1);
+        V1 = [ V1[0] + E1[0] , V1[1] + E1[1] ];  
+
+        var V1_polar = toPolar(V1[0],V1[1])[0].toFixed(2) + "< " + toPolar(V1[0],V1[1])[1].toFixed(2); 
+        var I1_polar = toPolar(kcl_i1[0],kcl_i1[1])[0].toFixed(2) + "< " + toPolar(kcl_i1[0],kcl_i1[1])[1].toFixed(2); 
+        //b find impedances in reference to primary side
+        var eff = divideCartisian( foilImaginary([V2,0], conjugate(Current_2) ) , (foilImaginary( V1, conjugate(kcl_i1) ) ) );  
+
+        $("#seven_ans_a").val(I1_polar + "A, " + V1_polar + "V");
+        $("#seven_ans_b").val(Math.abs( eff[1].toFixed(3)) ); //this seems wonky
+}
+function eight(){
+    var L11 = toNumber($("#eight_L11").val()),
+        L12 = toNumber($("#eight_L12").val()),
+        L22 = toNumber($("#eight_L22").val()),
+        I1 = toNumber($("#eight_I1").val()),
+        I2 = toNumber($("#eight_I2").val());
+        
+        //a equation for energy in field
+        //var w = .5 * L11 * Math.pow(I1, 2) + .5 * L22 * Math.pow(I2, 2) + (L12) * I1 * I2;
+        var w = "(1/2)*" + L11 + "*" + I1 + "^2" + " + (1/2)*" + L22 + "*" + I2 + "^2 + " + L12 + "cos(theta) * (" + I1 + ")";
+        //b equation of torque T=dW / dTheta
+        var t = L12 + " * (" + I1 + ")*" + "sin(theta)";
+        $("#eight_a").val(w);
+        $("#eight_b").val(t);
+}
+function nine(){
+    var R1_r = toNumber($("#nine_R1_r").val()),
+        R1_j = toNumber($("#nine_R1_j").val()),
+        R2_r = toNumber($("#nine__R2_r").val()),
+        R2_j = toNumber($("#nine__R2_j").val()),
+        Tx_h = toNumber($("#nine__Tx_h").val()),
+        Tx_l = toNumber($("#nine_Tx_l").val()),
+        Rc = toNumber($("#nine_Rc").val()),
+        Xm = toNumber($("#nine_Xm").val()),
+        va = toNumber($("#nine__Tx_Va").val()),
+        load_percent = toNumber($("#nine_loadpercent").val()),
+        pf = parseFloat($("#nine_PF").val()),
+        load_state = ($("#nine_pf_ll option:selected").text()),
+        V2 = toNumber($("#nine_V2").val());
+        
+        
+        //find current and voltage at primary side
+        //there is errors in this
+        var Sload = [ load_percent * va , Math.acos(pf) * ((load_state == "leading") ? -1 : 1)]; //in radians
+        var turns = Tx_h / Tx_l;
+        var Ip1 = foilImaginary( (conjugate(divideCartisian(Sload, [V2,0]))), [Tx_l / Tx_h, 0] );
+        var I2 = foilImaginary([turns, 0],  Ip1);
+        var E2_r = foilImaginary([R2_r,0],I2)[0] + V2;
+        var E2_j = foilImaginary([0,R2_j],I2)[1];
+        var E2 = [E2_r,E2_j];
+        var E1 = foilImaginary([turns, 0],  E2);
+        var I0 = divideCartisian(E1, complex_parallel([Rc,0],[0,Xm]) );
+        var kcl_i1 = [Ip1[0] + I0[0], Ip1[1] + I0[1]];
+        var V1 = foilImaginary([R1_r,R1_j], kcl_i1);
+        V1 = [ V1[0] + E1[0] , V1[1] + E1[1] ];  
+
+        var Pout = [ V2 * conjugate(I2)[0], V2 * conjugate(I2)[1] ];
+        var Pin = foilImaginary(V1, conjugate(kcl_i1));
+
+        var eff = divideCartisian(Pout ,  Pin);
+        $("#nine_ans_a").val(kcl_i1 + "A, " + V1 + "V");
+        $("#nine_ans_b").val( eff[0].toFixed(3)); 
+}
+function ten(){
+    //wye connected! 
+    var Hz = toNumber($("#ten_hz").val()),
+        Hp = toNumber($("#ten_hp").val()),
+        RPM_Unloaded = toNumber($("#ten_rpm_unloaded").val()),
+        RPM_Loaded100 = toNumber($("#ten_rpm_loaded").val());
+    
+        var poles = 120 * Hz / RPM_Unloaded;  //Number of poles of the motor
+        var slip = (RPM_Unloaded - RPM_Loaded100) / RPM_Unloaded; 
+        var rotar_frequency = slip * Hz;
+        var output_torque = (Hp * 745.699872) / (RPM_Loaded100 * (2 * pi / Hz));
+        //1 HP == 746 Watts
+
+        $("#ten_ans_a").val( poles.toFixed(3)); 
+        $("#ten_ans_b").val( slip.toFixed(3) * 100); 
+        $("#ten_ans_c").val( rotar_frequency.toFixed(3)); 
+        $("#ten_ans_d").val( output_torque.toFixed(3)); 
+    }
+function eleven(){
+        var v = toNumber($("#eleven_v").val()),
+            hp = toNumber($("#eleven_hp").val()),
+            a = toNumber($("#eleven_a").val()),
+            pf = parseFloat($("#eleven_pf").val()), 
+            load_state = ($("#eleven_pf_ll option:selected").text()),
+            stator = toNumber($("#eleven_stator_l").val()), 
+            rotar = toNumber($("#eleven_rotar_l").val()),
+            core = toNumber($("#eleven_core").val()), 
+            friction = toNumber($("#eleven_friction").val()),  
+            stray = toNumber($("#eleven_stray").val());
+
+        var voltage = toCartesian(a, ((load_state == "leading") ? -1 : 1) * toDegrees(Math.acos(pf)));
+        var Pin = ( voltage[0]*v*3 )/ Math.sqrt(3);
+        var Pgap = Pin - stator - core; //Pm == core
+        var Pmech = Pgap - rotar //b
+        var Pout = Pmech - friction - stray; //c
+        var eff = Pout/Pin; //d
+        
+        $("#eleven_ans_a").val( Pgap.toFixed(2) ); 
+        $("#eleven_ans__b").val( Pmech.toFixed(2) ); 
+        $("#eleven_ans_c").val( Pout.toFixed(2)  ); 
+        $("#eleven_ans_d").val( (eff*100).toFixed(2) ); 
+}
+function twelve(){
+    console.warn("WARN:  12 is strange");
+        var p = toNumber($("#twelve_pole").val()),
+            hp = toNumber($("#twelve_hp").val()),
+            v = toNumber($("#twelve_v").val()),
+            R1 = parseFloat($("#twelve_R1").val()), 
+            J1 = toNumber($("#twelve_J1").val()), 
+            R2 = toNumber($("#twelve_R2").val()),
+            J2 = toNumber($("#twelve_J2").val()), 
+            Xm = toNumber($("#twelve_Xm").val()),
+            f = 60,
+            s = 1;
+
+        var Ns = 120 * f / p; //rpm
+        var Ws = Ns * (2*pi)/f; 
+
+        var Zeq = complex_parallel( [0, Xm] , [ R2/s , J2 ] );
+        var Zeq = [Zeq[0] + R1, Zeq[0] + J1 + R1];
+        var Zeq_p = toPolar(Zeq[0], Zeq[1]);
+        //[0.5126871693501576, 1.167380343497235] goal
+
+        var I1 = divideCartisian([(v / Math.sqrt(3)) , 0], Zeq);   
+        var I1_p = toPolar(I1[0], I1[1]); //a - stator current at startup
+
+        var Pf_startup = Math.cos(toRadians(I1_p[1])); //b
+        var Pf_ll = IsLeadLag(Pf_startup);
+         
+        var I2 = divideCartisian( (foilImaginary (complex_parallel([0, Xm], [R2, J2]) , I1) ), [R2, J2] ) ; //Holy Crap Batman!
+        var I2_p = toPolar(I2[0],I2[1]);
+        console.log("I2: " + toPolar(I2[0],I2[1]));
+
+        Pout = 3 * (R2 / s) *  Math.pow(I2[0], 2); //this might be wrong...
+        //WARN - t is simplified to the limit of s-> 1!! 
+        var t = (3 * R2/s * Math.pow(I2_p[0],2)) / Ws; //Newton Meter
+        
+        $("#twelve_ans_a").val( I1_p[0].toFixed(2) + " angle(" + I1_p[1].toFixed(2) + ")"); 
+        $("#twelve_ans__b").val( Pf_startup.toFixed(2) + " - " + Pf_ll ); 
+        $("#twelve_ans_c").val( Pout.toFixed(3)  ); 
+        $("#twelve_ans_d").val( t.toFixed(2) ); 
+}
+function thirteen(){
+    var v = toNumber($("#thirteen_v").val()),
+            r = toNumber($("#thirteen_r").val()),
+            wloss = toNumber($("#thirteen_wl").val()),
+            closs = toNumber($("#thirteen_cl").val()), 
+            pf_ll = ($("#thirteen_pf_ll option:selected").text()),
+            pf = toNumber($("#thirteen_pf").val()),
+            hp = toNumber($("#thirteen_hp1").val()),
+            hp1 = toNumber($("#thirteen_hp2").val());
+
+        var pf_state = ((pf_ll == "leading") ? -1 : 1);
+
+        //a 
+        var Pout = (hp * 746); //745.699872hp to w 
+        var Pin = Pout + wloss + closs;
+        var Il = Pin/(Math.sqrt(3) * v * pf_state * pf);  
+        var Ia = [Il / Math.sqrt(3) , Math.acos(pf)];
+        var Ia_c = toCartesian(Ia[0], toDegrees(Ia[1]));
+        var XsIa = foilImaginary([r,0], Ia_c);
+        var Ea = [v + XsIa[1], (-1) * XsIa[0]];
+        var Ea_p = toPolar( Ea[0], Ea[1] );
+
+        var newP = hp1*746;
+        var Pn = newP + wloss + closs;
+        var Pangle= Math.asin( (r*Pn)  /  (3*v*Ea_p[0])  );
+        var Ea_np = [Ea_p[0], -1 * toDegrees(Pangle)];
+        var Ea_n = [Ea_p[0], -1 * Pangle];
+
+        var IprimeA = divideCartisian(Ea, [0,r]);
+        var IprimeA_p = toPolar(divideCartisian(Ea, [r,0])[0], divideCartisian(Ea, [r,0])[1]);
+
+        var IprimeL = foilImaginary( [Math.sqrt(3), 0] , IprimeA );
+        var IprimeL_p = toPolar(IprimeL[0], IprimeL[1]);
+
+        var pf_out = [ Math.cos(IprimeL[1]) , IsLeadLag(Math.cos(IprimeL[1]))];
+
+
+        $("#thirteen_ans_a").val( Il.toFixed(2) ); 
+        $("#thirteen_ans_b").val( Ia[0].toFixed(2) + " <" + toDegrees(Math.acos(pf)).toFixed(2) );
+        $("#thirteen_ans_c").val( Ea_p[0].toFixed(2) + " <" + Ea_p[1].toFixed(2) );
+
+        $("#thirteen_ans_d").val( Pn + " Watts" ); 
+        console.warn("WARN:  DATA PAST HERE IN PROBLEM 13 IS NOT CORRECT!")
+        $("#thirteen_ans_e").val(  Ea_np[0].toFixed(2) + " <" + Ea_np[1].toFixed(2));
+        $("#thirteen_ans_f").val( IprimeA_p[0].toFixed(2) + " <" +  IprimeA_p[1].toFixed(2) );
+        $("#thirteen_ans_g").val( IprimeL_p[0].toFixed(2) + " <" +  IprimeL_p[1].toFixed(2) );
+        $("#thirteen_ans_h").val( pf_out[0].toFixed(3) + ", " + pf_out[1]);
+}
+function fourteen(){
+    var Motor1P = toNumber($("#fourteen_m1p").val()),
+            Motor1PF = toNumber($("#fourteen_motor1pf").val()),
+            Motor2P = toNumber($("#fourteen_m2p").val()),
+            Motor2PF = parseFloat($("#fourteen_motor2pf").val()), 
+            RealPower = toNumber($("#fourteen_rp").val()), 
+            BusV = toNumber($("#fourteen_bV").val()),
+            BusPF = toNumber($("#fourteen_bpf").val()), 
+            pfn1 = toNumber($("#fourteen_motorn_pf").val());
+
+    var pf_m1 = ($("#fourteen_m1_ll option:selected").text()),
+        pf_m1 = ($("#fourteen_m2_ll option:selected").text()),
+        pf_bus = ($("#fourteen_bpfll option:selected").text())
+        pf_n1 = ($("#fourteen_motorn_pfll option:selected").text());
+    
+    var pf_m1 = ((pf_m1 == "leading") ? -1 : 1);
+    var pf_m2 = ((pf_m2 == "leading") ? -1 : 1);
+    var pf_bus = ((pf_bus == "leading") ? -1 : 1);
+    var pf_n1 = ((pf_bus == "leading") ? -1 : 1);
+
+    var Q1 = Motor1P * Math.tan(Math.acos(Motor1PF)) * pf_m1; //vars
+    var Q2 = Motor2P * Math.tan(Math.acos(Motor2PF)) * pf_m2; 
+    var Q3 = RealPower * Math.tan(Math.acos(BusPF)) * pf_bus; 
+    var Qtotal = Q1 + Q2 + Q3;
+    var Ptotal = Motor1P + Motor2P + RealPower;
+
+    var PFtotal = Math.cos( Math.atan(Qtotal/Ptotal) );
+    var PFtotal_state = IsLeadLag(PFtotal);
+
+    var Il = Ptotal / (Math.sqrt(3) * BusV * PFtotal);
+    
+    var Q3_2 = RealPower * Math.tan(Math.acos(pfn1)) * -1 *pf_n1;
+    var Qtotal_2 = Q1 + Q2 + Q3_2;
+    var PFtotal_2 = Math.cos( Math.atan(Qtotal_2/Ptotal) );
+    var PFtotal_state_2 = IsLeadLag(PFtotal_2);
+    var Ilprime = Ptotal / (Math.sqrt(3) * BusV * PFtotal_2);
+
+    //3 in parenthesis is motor impedence?  Not sure where it comes from....
+    var Plineloss = 3 * Math.pow(Il,2)*(3);
+    var Plineloss1 = 3 * Math.pow(Ilprime,2)*(3);
+    var eff =  ((Plineloss - Plineloss1) / Plineloss) * 100;
+
+    $("#fourteen_ans_a").val( Ptotal.toFixed(2) + "W, " + Qtotal.toFixed(2) + "VARS" );
+    $("#fourteen_ans_b").val( Il.toFixed(2) + "A " +  PFtotal.toFixed(4) + ", " +  PFtotal_state);
+    $("#fourteen_ans_c").val( "I': " + Ilprime.toFixed(2) + " PF: " + PFtotal_2.toFixed(2) + "  " + PFtotal_state_2 + ", Eff:" + eff.toFixed(2) + "%" );
+}
+function fifteen(){
+    var hz_a = toNumber($("#fifteen_hz_a").val()),
+        hz_b = toNumber($("#fifteen_hz_b").val()),
+        poles = toNumber($("#fifteen_hz_poles").val());
+    
+    var ans = (hz_a / hz_b) * poles;
+    $("#fifteen_ans_a").val( ans );
+}
+/*
+
+*/
+</script>
+</head>
+<body onload="openCity(event, 'synchronus')">
+    <h2>AC Power Systems</h2>
+    <div class="tab">
+        <button id="primaryUI" class="tablinks" onclick="openCity(event, 'calc')">Three Phase Power</button>
+        <button class="tablinks" onclick="openCity(event, 'transformer')">Transformers</button>
+        <button class="tablinks" onclick="openCity(event, 'magnetic')">Magnetic</button>
+        <button class="tablinks" onclick="openCity(event, 'induction')">Induction Machines</button>
+        <button class="tablinks" onclick="openCity(event, 'synchronus')">Synchronus Machines</button>
+      </div>
+ <div id="calc" class="tabcontent">    
+    <center><h3>Three Phase Power</h3></center>
+    <div id="One">
+        <img width="50%" src="1.PNG"></img><br>
+        <p><b>1.</b> A three phase <input value="60" id ="one_Hz" type="text">Hz <input value="3000" id ="one_kVA" type="text"> kVA wye-connected synchronous generator has
+            balanced line to line voltages of <input value="8320" id ="one_terminal" type="text">V at its terminals. If the generators are supplying power to a delta-connected, 
+            balanced load of <input value="5M" id ="one_MVA" type="text">VA at a <input value=".8" id ="one_pf" type="text"> lagging power factor, determine the following:
+            </p>
+        <button onclick="one()">Calculate</button><br>
+        a)	The total power absorbed by the delta load: <input id="one_a" type="text">Watts<br>
+        b)	The load impedance per phase: <input id="one_b" type="text"><br>
+        <hr>
+    </div> 
+
+    <div id="Two">
+        <img width="50%" src="2.PNG"></img><br>
+        <p><b>2.</b> A three phase, <input value="60" id ="two_Hz" type="text">Hz, wye-connected synchronous generator is providing power to two balanced three phase loads.
+             The first load is wye connected and made up of three <input value="6" id ="two_wyeA" type="text"> < <input value="45" id ="two_wyeB" type="text"> Ohm impedances,
+              while the second load is delta connected and made up of three <input value="9" id ="two_deltaA" type="text"> < <input value="75" id ="two_deltaB" type="text"> impedances.
+              Use a phase voltage of V<sub>a</sub> = <input value="77.1281" id ="two_Va_a" type="text"> < <input value="0" id ="two_Va_b" type="text"> V. 
+              Determine the following:
+            </p>
+        <button onclick="two()">Calculate</button><br>
+        a) Total load impedance per phase <input id="two_a" type="text"> <br>
+        b) The line current I_a at the generator terminal <input id="two_b" type="text"> <br>
+        c) The total complex power provided by the generator <input id="two_c" type="text"> <br>
+    
+        <hr>
+    </div>
+
+    <div id="Three">
+        <p><b>3.</b> 	Two three phase generators are supplying the same load bus, as shown in the following figure. Both generators produce balanced voltages of abc phase sequence.
+             Use Va=<input value="120" id ="three_va_r" type="text"> <<input value="0" id ="three_va_j" type="text"> V and <br> Va^' = <input value="115" id ="three_vb_r" type="text">
+             < <input value="0" id ="three_vb_j" type="text"> V as the reference voltages for the left and right generators in the figure, respectively. If a balanced three phase
+              load is connected in the middle of the bus, as shown in the figure:<br>
+              <img width="50%" src="3.jpg"></img><br>
+              <br>Generator Va connection to bus:<br>
+              <input value="0" id ="three_va_tx_r" type="text"> + j<input value="4" id ="three_va_tx_j" type="text"><br>
+              Load connection to bus:<br>
+              <input value="2" id ="three_load_tx_r" type="text"> + j<input value="3" id ="three_load_tx_j" type="text"><br>
+              Generator Va' connection to bus:<br>
+              <input value="0" id ="three_va1_tx_r" type="text"> + j<input value="5" id ="three_va1_tx_j" type="text"><br>
+              Load:<br>
+              <input value="0" id ="three_load_r" type="text"> + j<input value="1000" id ="three_load_j" type="text"><br>
+
+
+            </p>
+        <button onclick="three()">Calculate</button><br>
+        a) Total complex power delivered to the load<input id="three_ans1" type="text"> <br>
+        b)	Line to line voltage at load <input id="three_ans2" type="text"> <br>
+        c)	Complex power passing through each generator<input id="three_ans3" type="text"> <br>
+    
+        <hr>
+    </div> 
+
+</div>
+<div id="transformer" class="tabcontent">
+    <center><h3>Transformers</h3></center>
+   
+    <div id="four">
+        <p><b>4.</b> A single phase <input value="2500" id ="four_tx1" type="text"> / <input value="250" id ="four_tx2" type="text">V, two winding ideal transformer
+             has a load of <input value="10" id ="four_loadR" type="text"> < <input value="40" id ="four_loadA" type="text"> Ohms connected to its secondary. 
+             If the primary of the transformer is connected to a <input value="2400" id ="four_sourceV" type="text"> V line, determine the following:<br>
+
+            </p>
+        <button onclick="four()">Calculate</button><br>
+        a. The secondary current: <input value="0" id ="four_ans_i2" type="text"> <br>
+        b. The primary current: <input value="0" id ="four_ans_i1" type="text"> <br>
+        c. The input impedance as seen from the line: <input value="0" id ="four_ans_input_r" type="text"> <br>
+        d. The output power of the transformer in kVA and in kW: <input value="0" id ="four_ans_outputPWR" type="text"> <br>
+        e. The input power of the transformer in kVA and in kW: <input value="0" id ="four_ans_inputPWR" type="text"> <br>
+    
+        <hr>
+    </div>
+
+    <div id="five">
+        <p><b>5.</b> An audio frequency transformer is employed to couple a <input value="100" id ="five_load" type="text"> resistive load to an electronic
+            source that can be represented by a constant voltage of <input value="6" id ="five_v" type="text">V in series with an internal resistance
+            of <input value="4000" id ="five_internalR" type="text">Ohms. Assume that the transformer is an ideal transformer and determine the following:<br>
+
+            </p>
+        <button onclick="five()">Calculate</button><br>
+        a. The turn ratio needed to provide maximum power transfer by matching the load and source impedances <input value="" id ="five_ans_a" type="text"> <br>
+        b. The values of current, voltage and power at the load under such conditions. <input value="" id ="five_ans_b" type="text"> <br>
+    
+        <hr>
+    </div>
+
+    <div id="six">
+        <p><b>6.</b> A <input value="50k" id ="six_kVA" type="text">VA, <input value="2400" id ="six_L1" type="text"> / <input value="240" id ="six_L2" type="text"> V, 
+            <input value="60" id ="six_Hz" type="text">Hz distribution transformer has equivalent resistance and equivalent
+            reactance both referred to its secondary side, of <input value="0.021888" id ="six_Rr" type="text"> and <input value="0.09101" id ="six_Rj" type="text">Ohms, respectively.
+            Determine the full load voltage regulation <br>
+
+            </p>
+        <button onclick="six()">Calculate</button><br>
+        a. At 0.9 lagging power factor <input value="" id ="six_ans_a" type="text"> <br>
+        b. At unity power factor <input value="" id ="six_ans_b" type="text"> <br>
+        c. At 0.9 leading power factor <input value="" id ="six_ans_c" type="text"> <br>
+    
+        <hr>
+    </div>
+
+    <div id="seven">
+        <img width="50%" src="2_1.PNG"></img><br>
+        <p><b>7.</b> <br>
+            R1: <input value="2" id="seven_R1_r" type="text">+j<input value="5" id="seven_R1_j" type="text"> <br>
+            R2: <input value="200" id="seven_R2_r" type="text">+j<input value="500" id="seven_R2_j" type="text"> <br>
+
+            Transformer Ratio: <input value="4800" id="seven_Tx_h" type="text">/<input value="120" id="seven_Tx_l" type="text"> <br>
+            Transformer VA: <input value="10k" id="seven_Tx_Va" type="text">VA.<br>
+            
+            R3: <input value=".005" id="seven_R3_r" type="text">+j<input value="0.0125" id="seven_R3_j" type="text"> <br>
+            I2: <input value="20" id="seven_I2" type="text"> < <input value="-34.915" id="seven_I2_a" type="text">Degrees<br>
+            <br> Lagging PF(.82) -> Degrees == -acos(.82) == -34.915 degrees<br><br>
+            V2: <input value="125" id="seven_V2" type="text"><br>
+            <br>
+        <button onclick="seven()">Calculate</button><br>
+        a. Find the current and voltage at the primary side <input size="30" value="" id ="seven_ans_a" type="text"> <br>
+        b. Find the efficiency <input size="30" value="" id ="seven_ans_b" type="text"> <br>
+        <hr>
+    </div> 
+
+    <div id="nine">
+        <img width="50%" src="2_3.PNG"></img><br>
+        <p><b>9.</b> <br>
+            R1: <input value="2" id="nine_R1_r" type="text">+j<input value="5" id="nine_R1_j" type="text"> <br>
+            R2: <input value="0.02" id="nine__R2_r" type="text">+j<input value="0.05" id="nine__R2_j" type="text"> <br>
+
+            Transformer Ratio: <input value="12000" id="nine__Tx_h" type="text">/<input value="480" id="nine_Tx_l" type="text"> <br>
+            Transformer VA: <input value="1200k" id="nine__Tx_Va" type="text">VA.<br>
+            
+            Rc and Xm: <input value="1000" id="nine_Rc" type="text">+j<input value="500" id="nine_Xm" type="text"> <br>
+            Transformer supplies a load of <input value="50" id="nine_loadpercent" type="text">% of nominal load at a power factor of <input value=".8" id="nine_PF" type="text"> 
+            <select onchange="nine()" id="nine_pf_ll">
+                <option value="lead">leading</option>
+                <option value="lag">lagging</option>
+              </select><br>
+            V2: <input value="490" id="nine_V2" type="text"><br>
+            <br>
+        <button onclick="nine()">Calculate</button><br>
+        a. Find the current and voltage at the primary side <input size="30" value="" id ="nine_ans_a" type="text"> <br>
+        b. Find the efficiency <input size="30" value="" id ="nine_ans_b" type="text"> <br>
+        <hr>
+    </div> 
+
+</div>
+<div id="magnetic" class="tabcontent">
+    <center><h3>Magnetic</h3></center>
+    <div id="eight">
+        <img width="50%" src="2_2.PNG"></img><br>
+        <p><b>8.</b> There is a magnetic circuit with two mutually coupled coils.  The self and mutually
+            inductances of the coils are given as follows:
+            L11: <input value="8m" id="eight_L11" type="text">H<br>
+            L12: <input value="2" id="eight_L12" type="text">cos(theta) (H)<br>
+            L22: <input value="5m" id="eight_L22" type="text">H<br>
+            I1: <input value="0.8" id="eight_I1" type="text">Ampere<br>
+            I2: <input value="1" id="eight_I2" type="text">Ampere<br>
+            </p>
+        <button onclick="eight()">Calculate</button><br>
+        a)	Write the equation for energy stored in the field: <input size="50" id="eight_a" type="text">T<br>
+        b)	Write the equation for the torque that gets applied to the rotor: <input id="eight_b" type="text"><br>
+        <hr>
+    </div> 
+</div>
+    <div id="induction" class="tabcontent">
+        <center><h3>Induction Machines</h3></center>
+        <div id="ten">
+            <p><b>10.</b> A	three phase <input value="60" id="ten_hz" type="text">Hz, <input value="25" id="ten_hp" type="text">hp,	wye	- connected	induction motor operates
+                at a shaft speed of almost <input value="1800" id="ten_rpm_unloaded" type="text">rpm at no load and <input value="1650" id="ten_rpm_loaded" type="text">rpm	at full	load.
+                Determine the following:
+                </p>
+            <button onclick="ten()">Calculate</button><br>
+            a)	The number of poles of the motor: <input size="15" id="ten_ans_a" type="text"><br>
+            b)	Slip in percentage <input size="15" id="ten_ans_b" type="text">%<br>
+            c)	Rotor frequency <input size="15" id="ten_ans_c" type="text">Hz<br>
+            b)	Output torque <input size="15" id="ten_ans_d" type="text">N*m<br>
+            <hr>
+        </div> 
+        <div id="eleven">
+            <p><b>11.</b> A three phase, <input size="3" value="480" id="eleven_v" type="text">V, <input size="3" value="50" id="eleven_hp" type="text">hp induction
+                 motor is supplied a <input size="3" value="70" id="eleven_a" type="text">A at a <input size="3" value="0.8" id="eleven_pf" type="text"> 
+                 <select onchange="eleven()" id="eleven_pf_ll">
+                    <option value="lag">lagging</option>
+                    <option value="lead">leading</option>
+                  </select> power factor. It’s 
+                stator and rotor copper losses are <input size="3" value="4257.53" id="eleven_stator_l" type="text"> and <input size="3" value="1000" id="eleven_rotar_l" type="text">W,
+                 respectively. Its core losses are <input size="3" value="3000" id="eleven_core" type="text">W, the friction and windage losses are 
+                 <input size="3" value="800" id="eleven_friction" type="text">W, and the stray losses are <input size="3" value="200" id="eleven_stray" type="text">W. Determine the 
+                following:
+                </p>
+            <button onclick="eleven()">Calculate</button><br>
+            a)	The	air-gap	power: <input size="15" id="eleven_ans_a" type="text">W<br>
+            b)	The mechanical power developed: <input size="15" id="eleven_ans__b" type="text">W<br>
+            c)	Output power <input size="15" id="eleven_ans_c" type="text">W<br>
+            b)	Efficiency <input size="15" id="eleven_ans_d" type="text">%<br>
+            <hr>
+        </div> 
+        <div id="twelve">
+            <p><b>12.</b> A three phase, <input size="3" value="2" id="twelve_pole" type="text">pole, <input size="3" value="35" id="twelve_hp" type="text">hp, 
+                <input size="3" value="480" id="twelve_v" type="text">V, wye-connected induction motor has the following per phase 
+                impedances:
+                <table border=1>
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>R</th>
+                        <th>X</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td><input size="3" value="0.322" id="twelve_R1" type="text"></td>
+                        <td><input size="3" value="0.675" id="twelve_J1" type="text"></td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td><input size="3" value="0.196" id="twelve_R2" type="text"></td>
+                        <td><input size="3" value="0.51" id="twelve_J2" type="text"></td>
+                      </tr>
+                    </tbody>
+                    </table><br>
+                    Xm: <input size="3" value="12.5" id="twelve_Xm" type="text">
+                </p>
+            <button onclick="twelve()">Calculate</button><br>
+            a)	Stator current at start up: <input size="15" id="twelve_ans_a" type="text">Ampere<br>
+            b)	Power Factor at startup: <input size="15" id="twelve_ans__b" type="text"><br>
+            c)	Output power at startup <input size="15" id="twelve_ans_c" type="text"><br>
+            b)	Torque at start up <input size="15" id="twelve_ans_d" type="text">Newton*meters<br>
+            <hr>
+        </div> 
+    
+      </div>
+    <div id="synchronus" class="tabcontent">
+        <center><h3>Synchronus Machines</h3></center>
+        <div id="thirteen">
+            <p><b>13.</b> 
+                A three-phase, 60 Hz,  <input size="15" value="277.1281" id="thirteen_v" type="text">V, delta-connected, cylindrical-rotor synchronous motor has a synchronous reactance of <input size="15"  value="4" id="thirteen_r" type="text">Ohms. 
+                It's armature resistance is negligible. It's combined friction and windage losses or <input size="15"  value="2.5k" id="thirteen_wl" type="text">W and its core losses are <input size="15"  value="2.25k" id="thirteen_cl" type="text">W. 
+                The motor is connected to a <input size="15" value="20" id="thirteen_hp1" type="text">hp mechanical load and is operating at a <select onchange="thirteen()" id="thirteen_pf_ll">
+                    <option value="lag">lagging</option>
+                    <option value="lead">leading</option>
+                  </select> power factor of <input size="15"  value="0.80" id="thirteen_pf" type="text">.
+                <br>
+                Find the mechanical load is increased to <input size="15" value="75" id="thirteen_hp2" type="text">hp, 
+                <br>
+            <button onclick="thirteen()">Calculate</button><br>
+            a. I<sub>L</sub>:<input size="30" value="" id ="thirteen_ans_a" type="text"> <br>
+            b. I<sub>a</sub>:<input size="30" value="" id ="thirteen_ans_b" type="text"> <br>
+            b. E<sub>a</sub>:<input size="30" value="" id ="thirteen_ans_c" type="text"> <br>
+            <br>
+            When the Power is increased:<br>
+            d. P</sub>:<input size="30" value="" id ="thirteen_ans_d" type="text"> <br>
+            e. E'<sub>a</sub>:<input size="30" value="" id ="thirteen_ans_e" type="text"> <br>
+            f. I'<sub>a</sub>:<input size="30" value="" id ="thirteen_ans_f" type="text"> <br>
+            g. I'<sub>L</sub>:<input size="30" value="" id ="thirteen_ans_g" type="text"> <br>
+            h. PF:<input size="30" value="" id ="thirteen_ans_h" type="text"> <br>
+            <hr>
+        </div> 
+
+        <div id="fourteen">
+            <p><b>14.</b> 
+                Assume that two three-phase induction motors and a three-phase synchronous motor are connected to the same bus. 
+                The first induction motor is <input size="4" value="150k" id="fourteen_m1p" type="text">W 
+                and operating at <input size="3" value="0.85" id="fourteen_motor1pf" type="text"><select onchange="fourteen()" id="fourteen_m1_ll">
+                    <option value="lag">lagging</option>
+                    <option value="lead">leading</option>
+                  </select> power factor. The second induction motor is <input size="4" value="250k" id="fourteen_m2p" type="text">W an operating at <input size="3" value="0.7" id="fourteen_motor2pf" type="text"> 
+                  <select onchange="fourteen()" id="fourteen_m2_ll">
+                    <option value="lag">lagging</option>
+                    <option value="lead">leading</option>
+                  </select>  power factor. The real power of the synchronous motor is <input size="4" value="200k" id="fourteen_rp" type="text">W. 
+                  If the bus voltage is <input size="4" value="480" id="fourteen_bV" type="text">volts and the synchronous motor is operating at <input size="3" value="0.9" id="fourteen_bpf" type="text"><select onchange="fourteen()" id="fourteen_bpfll">
+                    <option value="lag">lagging</option>
+                    <option value="lead">leading</option>
+                  </select> power factor, determine the following.
+                <br>
+            <button onclick="fourteen()">Calculate</button><br>
+            a. The total real and reactive power at the bus. :<input size="30" value="" id ="fourteen_ans_a" type="text"> <br>
+            b. The total bus current and its power factor:<input size="30" value="" id ="fourteen_ans_b" type="text"> <br>
+            c. If the synchronous motor is operating at <input size="3" value="0.9" id="fourteen_motorn_pf" type="text"><select onchange="fourteen()" id="fourteen_motorn_pfll">
+                <option value="lead">leading</option>
+                <option value="lag">lagging</option>
+              </select> power factor, the new total bus current and its power factor:<input size="30" value="" id ="fourteen_ans_c" type="text"> <br>
+            <hr>
+        </div> 
+
+        <div id="fifteen">
+            <p><b>15.</b> 
+                It is necessary to supply 1000 kW of <input size="5" value="60" id="fifteen_hz_a" type="text">Hz power. The only power sources available to
+                operate at <input size="5" value="50" id="fifteen_hz_b" type="text">Hz. It is decided to generate the power by means of a motor generator set consisting of a
+                synchronous generator. How many poles should each of the two machines have in order to convert from the first frequency to the second, 
+                assuming the first device has <input size="5" value="10" id="fifteen_hz_poles" type="text"> poles.
+                <br>
+            <button onclick="fifteen()">Calculate</button><br>
+            a. Poles on the second frequency:<input size="30" value="" id ="fifteen_ans_a" type="text"> <br>
+            <hr>
+        </div>
+
+        
+    </div>
+  </div>
+</body>
+</html>
