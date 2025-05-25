@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Filter Calculator</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    canvas {
+      border: 1px solid #000;
+    }
+    #tooltip {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #000;
+      padding: 5px;
+      display: none;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<script>
+    const tooltip = document.getElementById("tooltip");
+
+    function toNumber(val) {
+      const metric = {k: 1e3, M: 1e6, G: 1e9, m: 1e-3, u: 1e-6, n: 1e-9};
+      const match = val.match(/([\d.]+)([kMGmun]?)/);
+      return parseFloat(match[1]) * (metric[match[2]] || 1);
+    }
+
+    function plot(canvas, data, label, color) {
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      const dataLog = data.map(([f, y]) => [Math.log10(f), y]);
+      const minX = Math.min(...dataLog.map(d => d[0]));
+      const maxX = Math.max(...dataLog.map(d => d[0]));
+      const minY = Math.min(...dataLog.map(d => d[1]));
+      const maxY = Math.max(...dataLog.map(d => d[1]));
+
+      canvas.onmousemove = e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const fx = minX + (mx / width) * (maxX - minX);
+        const freq = 10 ** fx;
+        const nearest = data.reduce((prev, curr) => Math.abs(curr[0] - freq) < Math.abs(prev[0] - freq) ? curr : prev);
+        const yVal = nearest[1];
+        tooltip.innerHTML = `${label}<br>f: ${nearest[0].toFixed(2)} Hz<br>y: ${yVal.toFixed(2)}`;
+        tooltip.style.left = `${e.pageX + 10}px`;
+        tooltip.style.top = `${e.pageY - 20}px`;
+        tooltip.style.display = 'block';
+      };
+      canvas.onmouseleave = () => tooltip.style.display = 'none';
+
+      ctx.beginPath();
+      data.forEach(([f, y], i) => {
+        const x = ((Math.log10(f) - minX) / (maxX - minX)) * width;
+        const yNorm = ((y - minY) / (maxY - minY));
+        const yPx = height - yNorm * height;
+        if (i === 0) ctx.moveTo(x, yPx);
+        else ctx.lineTo(x, yPx);
+      });
+      ctx.strokeStyle = color;
+      ctx.stroke();
+    }
+
+    function simulate() {
+      const maxHz = toNumber(document.getElementById("max_hz").value);
+      const bins = parseInt(document.getElementById("bins").value);
+      const R = toNumber(document.getElementById("r_1").value);
+      const C = toNumber(document.getElementById("c_1").value);
+      const type = document.getElementById("filter_type").value;
+
+      const bode = [];
+      const phase = [];
+      for (let i = 1; i <= bins; i++) {
+        const f = i * maxHz / bins;
+        const omegaRC = 2 * Math.PI * f * R * C;
+        let mag, phaseDeg;
+        if (type === 'lpf') {
+          mag = 1 / Math.sqrt(1 + omegaRC ** 2);
+          phaseDeg = -Math.atan(omegaRC) * (180 / Math.PI);
+        } else {
+          mag = omegaRC / Math.sqrt(1 + omegaRC ** 2);
+          phaseDeg = 90 - Math.atan(1 / omegaRC) * (180 / Math.PI);
+        }
+        bode.push([f, 20 * Math.log10(mag)]);
+        phase.push([f, phaseDeg]);
+      }
+
+      plot(document.getElementById("bode_canvas"), bode, "Magnitude (dB)", "blue");
+      plot(document.getElementById("phase_canvas"), phase, "Phase (deg)", "red");
+    }
+  </script>
+
+<body>
+  <h2>Filter Calculator</h2>
+  <canvas id="bode_canvas" width="600" height="300"></canvas>
+  <canvas id="phase_canvas" width="600" height="300"></canvas>
+  <div id="tooltip"></div>
+
+  <table border="1">
+    <thead>
+      <tr><th colspan="2">Simulation Configuration</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>F<sub>max</sub></td><td><input type="text" value="1.5k" id="max_hz">Hz</td></tr>
+      <tr><td>Graph step/Increment</td><td><input type="text" value="1000" id="bins"></td></tr>
+    </tbody>
+  </table>
+  <br>
+  <label>Filter Type</label>
+  <select id='filter_type'>
+    <option value='lpf'>Lowpass</option>
+    <option value='hpf'>Highpass</option>
+  </select><br>
+  <label>R<sub>1</sub></label><input type="text" value="5k" id="r_1"> Ohms<br>
+  <label>C<sub>1</sub></label><input type="text" value="100n" id="c_1"> F<br>
+  <button onclick="simulate()">Simulate</button>
+<hr>
+<center>Detmers, 2023</center>
+</body>
+</html>
