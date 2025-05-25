@@ -1,0 +1,245 @@
+<html>
+<head>
+    <title>EEE - 199 jPole</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="http://gb4iphone.x10.mx/161/web-component-smith-chart.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109081589-1"></script>
+    <script>
+//the yeehaw math library
+//Constants
+var pi = Math.PI; //pi in radians
+var c = 299792458; //speed of light in ms
+var metricRanges = [
+  { divider: 1e18 , suffix: 'E' },
+  { divider: 1e15 , suffix: 'P' },
+  { divider: 1e12 , suffix: 'T' },
+  { divider: 1e9 , suffix: 'G' },
+  { divider: 1e6 , suffix: 'M' },
+  { divider: 1e3 , suffix: 'k' },
+  { divider: 1 , suffix: '' },
+  { divider: 1e-2 , suffix: 'c' },
+  { divider: 1e-3 , suffix: 'm' },
+  { divider: 1e-6 , suffix: 'u' },
+  { divider: 1e-9 , suffix: 'n' },
+  { divider: 1e-12 , suffix: 'p' }
+];
+
+//Basic Manipulations
+function nPi(value){
+    return value*pi;
+}
+function toDegrees(angle) {
+    return angle * (180 / pi); //rad to deg
+}
+function toRadians(angle) {    
+    return angle * (pi / 180); //deg to rad
+}
+function toCartesian(radius,degrees){
+    //aka rectangular form, [real, imag]
+    //radius*Math.cos(toRadians(degrees)) + " +j" + radius*Math.sin(toRadians(degrees));
+    return [radius*Math.cos(toRadians(degrees)), radius*Math.sin(toRadians(degrees))];
+}
+function toPolar(x,y){
+    var r = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    var theta = Math.atan2(y,x);
+    return [r, toDegrees(theta)]; //export as a motha fuckin array
+    //return(r + ", " + toDegrees(theta)+"°");
+}
+function toWavelength(frequency){
+    return c / frequency; //returns in meters
+}
+function toFrequency(wavelength){
+    return c / wavelength; //returns in Hz
+}
+function toMetric(number) {
+  //Shortens numbers to strings with metric prefixes
+  for (var i = 0; i < metricRanges.length; i++) {
+    if (Math.abs(number) >= metricRanges[i].divider) {
+      return (number / metricRanges[i].divider).toString() + metricRanges[i].suffix;
+    }
+  }
+  return number.toString();
+}
+function toNumber(string){
+    //convert things with their metric prefixes to their numeric values. Function broken with Negative values
+    if (typeof string === 'string' || string instanceof String){
+        var num = string.replace(/[^\d.-]/g, '');
+        var suffix = string.split('.').join('').replace(/[0-9]/g, '');
+        for (var i = 0; i < metricRanges.length; i++) {
+          if (suffix === metricRanges[i].suffix){
+            return num * metricRanges[i].divider;
+          }
+        }
+    }else{
+        return string;
+    }
+}
+function divideCartisian(Num, Denom){
+    //divide two cartisian values and return an single array
+    var result = makeReal(Num, Denom);
+    var real = result.NumeratorReal/result.Denominator;
+    var complex = result.NumeratorImaginary/result.Denominator;
+    return [real, complex];
+}
+function makeReal(Num, Denom){
+    //[Real, Imaginary]
+    //d !== 0 Removes complex number from denom
+    var output = {};
+    output.NumeratorReal = (Num[0] * Denom[0]) + (Num[1] * Denom[1]); //numerator real
+    output.NumeratorImaginary = (Num[1]*Denom[0] - Num[0]*Denom[1]); //numerator imaginary
+    output.Denominator = (Math.pow(Denom[0],2) + Math.pow(Denom[1],2)); //denominator
+    return output;
+}
+function foilImaginary(groupA, groupB){
+    //(a + bi)(c + di)
+    var real = ( groupA[0] * groupB[0] ) - ( groupA[1] * groupB[1] );
+    var imag = ( groupA[0] * groupB[1] ) + ( groupA[1] * groupB[0] );
+    return [real, imag];
+}
+function conj(complexstr){
+    //expects complex string such as 3 - 4i or 6 + 5i
+    let z = complexstr;
+    var l = complexstr.length;
+    var i;
+    if (complexstr.indexOf('+') != -1) {
+        i = complexstr.indexOf('+');
+        s = complexstr.replace('+', '-');
+    }
+    else {
+        i = complexstr.indexOf('-');
+        s = complexstr.replace('-', '+');
+    }
+    return s; //return compelx conj as string
+}
+function conjugate(input){
+    //[real, imaginary]
+    //apply conjugate function to standard real/imag pair
+    return [input[0], (input[1] * -1) ];
+}
+function parallel(r1, r2){
+    //parallel circut, real comp only
+    return (r1 * r2) / (r1 + r2);
+}
+function complex_parallel([R1r, R1j],[R2r, R2j]){
+    //two complex loads in parallel.
+    function sq(x){return x*x}
+    fh = document.forms[0];
+    rr1 = R1r;
+    xx1 = R1j;
+    rr2 = R2r;
+    xx2 = R2j;
+    rr = rr1 - (-1) * rr2;
+    xx = xx1 - (-1) * xx2;
+    zz = Math.sqrt(sq(rr) - (-1) * sq(xx));
+   // fh.zep.value = Math.atan(xx / rr) * 180 / Math.PI;
+    t1 = (rr1 * rr2 - xx1 * xx2) * (rr1 - (-1) * rr2);
+    t2 = (xx1 * rr2 - (-1) * xx2 * rr1) * (xx1 - (-1) * xx2);
+    t3 = sq(rr1 - (-1) * rr2) - (-1) * sq(xx1 - (-1) * xx2);
+    rrp = (t1 - (-1) * t2) / t3; //need
+   // fh.zerp.value = rrp; //need
+    t4 = (xx1 * rr2 - (-1) * xx2 * rr1) * (rr1 - (-1) * rr2);
+    t5 = (rr1 * rr2 - xx1 * xx2) * (xx1 - (-1) * xx2);
+    t6 = sq(rr1 - (-1) * rr2) - (-1) * sq(xx1 - (-1) * xx2);
+    xxp = (t4 - t5) / t6; //needed
+   // fh.zexp.value = xxp; //need
+   // fh.zeap.value = Math.sqrt(sq(rrp) - (-1) * sq(xxp));//need
+   // fh.zepp.value = Math.atan(xxp / rrp) * 180 / Math.PI //need
+    
+    return [rrp, xxp];
+}
+//Ra,Rb,Rc are external points.  Rx Ry, Rz are inner resistors in Wye.  R1, R2, R3 are Points in Delta 
+function toWye(R1, R2, R3){
+    var delta = {};
+    delta["Rx"] = (R2 * R3) / (R1 + R2 + R3);
+    delta["Ry"] = (R1 * R3) / (R1 + R2 + R3);
+    delta["Rz"] = (R1 * R2) / (R1 + R2 + R3);
+    return delta;
+}
+function balanced_toWye(delta){
+    return delta/3;
+}
+function toDelta(Rx, Ry, Rz){
+    var wye = {};
+    wye["R1"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Rx;
+    wye["R2"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Ry;
+    wye["R3"] = ( (Rx * Ry) + (Ry * Rz) + (Rx * Rz) ) / Rz;
+    return wye;
+}
+function balanced_toDelta(wye){
+    return 3*wye;
+}
+function IsLeadLag(powerfactor){
+    //Pass in Power Factor, Determine if Leading or Lagging
+    var pf = Math.sign(powerfactor);
+    if (pf > 0){
+        return "Lagging"
+    }
+    if (pf < 0){
+        return "Leading"
+    }
+    if (pf === 0){
+        return "Unity"
+    }else{
+        return "Unknown"
+    }
+}
+</script>
+<script>
+    //jPole Calculator
+function calculate(){
+    var hz = toNumber($("#Hz").val()),
+    vf = toNumber($("#vf").val()); 
+    
+	var wavelngth = toWavelength(hz);
+    var halfwave = wavelngth/2;
+    var wavelght_wVf = (vf/hz);
+    var TotalLength = wavelngth*0.75*vf;
+    var SmallerVertical = (0.25*vf)*wavelngth;
+    var CoaxialFeedPoint = vf*(wavelngth/40);
+    var HorizontalSpacing = 6710000/hz;
+
+    var elecLen = SmallerVertical + TotalLength + HorizontalSpacing; //needs verification
+    var FarField = ((2 * elecLen * elecLen) / wavelngth);
+    var NearField = (0.62 * (Math.sqrt(Math.pow(elecLen, 3) / wavelngth)));
+    
+
+    $("#One").val( TotalLength.toFixed(3) );
+    $("#Two").val( SmallerVertical.toFixed(3) );
+    $("#Three").val( CoaxialFeedPoint.toFixed(3) );
+    $("#Four").val( HorizontalSpacing.toFixed(3) );
+
+    $("#Five").val( wavelngth.toFixed(3) );
+    $("#Six").val( NearField.toFixed(3) );
+    $("#Seven").val( FarField.toFixed(3) );
+    $("#Eight").val( FarField.toFixed(3) );
+
+}
+</script>
+</head>
+<body>
+<img src="jpole_diag.png"><br>
+Desired Output Frequency:  <input value="144.5M" id ="Hz" type="text"> <br>
+Coaxial Velocity Factor:  <input value="0.9" id ="vf" type="text"> <br>
+<button onclick="calculate()">Calculate</button>
+<hr>
+<center><h3>OUTPUT</h3></center>
+<strong>Physical Dimensions</strong>
+<p style="color:#009900;">(1) Total Length:  <input value="" id ="One" type="text"> Meters</p>
+<p style="color:#FF0000;">(2) Smaller Vertical Height <input value="" id ="Two" type="text"> Meters</p>
+<p style="color:#4C0099;">(3) Coax Tap Height from Bottom:  <input value="" id ="Three" type="text"> Meters</p>
+<p style="color:#666600;">(4) Horizontal Spacing <input value="" id ="Four" type="text"> Meters</p>
+<br>
+<strong>Electrical Characteristics</strong>
+<p >Wavelength <input value="" id ="Five" type="text"> Meters</p>
+<p >Reactive Near Field Distance &lt; <input value="" id ="Six" type="text"> Meters</p>
+<p >Radiating Near Field Distance &lt; <input value="" id ="Seven" type="text"> Meters</p>
+<p >Far Field &gt; <input value="" id ="Eight" type="text"> Meters</p>
+<hr>
+<h3>References:  </h3>
+[1] <a href="https://en.wikipedia.org/wiki/J-pole_antenna">J-Pole antenna, Wikipedia</a><br>
+[2] <a href="http://www.ka3pmw.com/files/jpole_presentation_rev2.pdf">Introduction to the J Pole Antenna, VK2GX</a><br>
+[3] <a href="hhttps://books.google.com/books?id=IbqPQz68lfkC&pg=PA149#v=onepage&q&f=false">Radio and Electronics Cookbook - Radio Societey of Great Britian</a><br>
+</body>
+</html>
+<!-- EEE 199 CSUS, Page Written by Matthew Detmers -->
