@@ -1,0 +1,463 @@
+<html>
+<head>
+    <title>161</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109081589-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-109081589-1');
+    </script>
+    <style>
+        body {font-family: Arial;}
+        
+        /* Style the tab */
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+        
+        /* Style the buttons inside the tab */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+        }
+        
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+        
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+        /* Smith Chart */
+        #chart {
+            width: 800px;
+            height: 400px;
+        }
+        </style>
+        <script>
+            //User Interface Crap(UIC)
+            function openCity(evt, cityName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(cityName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+            </script>
+<script>
+// the yeehaw math library
+//Constants
+var pi = Math.PI; //pi in radians
+var c = 299792458; //speed of light in ms
+var metricRanges = [
+  { divider: 1e18 , suffix: 'E' },
+  { divider: 1e15 , suffix: 'P' },
+  { divider: 1e12 , suffix: 'T' },
+  { divider: 1e9 , suffix: 'G' },
+  { divider: 1e6 , suffix: 'M' },
+  { divider: 1e3 , suffix: 'k' },
+  { divider: 1 , suffix: '' },
+  { divider: 1e-2 , suffix: 'c' },
+  { divider: 1e-3 , suffix: 'm' },
+  { divider: 1e-6 , suffix: 'u' },
+  { divider: 1e-9 , suffix: 'n' },
+  { divider: 1e-12 , suffix: 'p' }
+];
+
+//Basic Manipulations
+function nPi(value){
+    return value*pi;
+}
+function toDegrees(angle) {
+    return angle * (180 / pi); //rad to deg
+}
+function toRadians(angle) {    
+    return angle * (pi / 180); //deg to rad
+}
+function toCartesian(radius,degrees){
+    //aka rectangular form, [real, imag]
+    //radius*Math.cos(toRadians(degrees)) + " +j" + radius*Math.sin(toRadians(degrees));
+    return [radius*Math.cos(toRadians(degrees)), radius*Math.sin(toRadians(degrees))];
+}
+function toPolar(x,y){
+    var r = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    var theta = Math.atan2(y,x);
+    return [r, toDegrees(theta)]; //export as a motha fuckin array
+    //return(r + ", " + toDegrees(theta)+"°");
+}
+function toWavelength(frequency){
+    return c / frequency; //returns in meters
+}
+function toFrequency(wavelength){
+    return c / wavelength; //returns in Hz
+}
+function toMetric(number) {
+  //Shortens numbers to strings with metric prefixes
+  for (var i = 0; i < metricRanges.length; i++) {
+    if (Math.abs(number) >= metricRanges[i].divider) {
+      return (number / metricRanges[i].divider).toString() + metricRanges[i].suffix;
+    }
+  }
+  return number.toString();
+}
+function toNumber(string){
+    //convert things with their metric prefixes to their numeric values. Shit don't do negative
+    if (typeof string === 'string' || string instanceof String){
+        var num = string.replace(/[^\d.-]/g, '');
+        var suffix = string.split('.').join('').replace(/[0-9]/g, '');
+        for (var i = 0; i < metricRanges.length; i++) {
+          if (suffix === metricRanges[i].suffix){
+            return num * metricRanges[i].divider;
+          }
+        }
+    }else{
+        return string;
+    }
+}
+function divideCartisian(Num, Denom){
+    //divide two cartisian values and return an single array
+    var result = makeReal(Num, Denom);
+    var real = result.NumeratorReal/result.Denominator;
+    var complex = result.NumeratorImaginary/result.Denominator;
+    return [real, complex];
+}
+function makeReal(Num, Denom){
+    //[Real, Imaginary]
+    //d !== 0 Removes complex number from denom
+    var output = {};
+    output.NumeratorReal = (Num[0] * Denom[0]) + (Num[1] * Denom[1]); //numerator real
+    output.NumeratorImaginary = (Num[1]*Denom[0] - Num[0]*Denom[1]); //numerator imaginary
+    output.Denominator = (Math.pow(Denom[0],2) + Math.pow(Denom[1],2)); //denominator
+    return output;
+}
+function foilImaginary(groupA, groupB){
+    //(a + bi)(c + di)
+    var real = ( groupA[0] * groupB[0] ) - ( groupA[1] * groupB[1] );
+    var imag = ( groupA[0] * groupB[1] ) + ( groupA[1] * groupB[0] );
+    return [real, imag];
+}
+//Smith Chart
+
+//The code here was removed as it was non-functional upon transition from local hardware to github TODO
+
+//specific equations for electromagnetics
+function one(){
+    var freq = parseFloat($("#one_MHz").val()),
+        tlOhm = parseFloat($("#one_tlR").val()),
+        light = parseFloat($("#one_c").val()),
+        load = parseFloat($("#one_load").val());
+
+    var phaseVelocity = c * light;
+    var angularVelocity = 2*pi*freq*10e6;
+    var beta = angularVelocity/phaseVelocity;
+    var lamda = phaseVelocity/c;
+    var minlength = (1/beta) * Math.atan(load/tlOhm); // meters
+    $("#one_ans").val( minlength * 1000); //cm
+    return minlength;
+}
+
+function two(){
+    var lamda = parseFloat($("#two_lamda").val()),
+        freq = toNumber($("#two_hz").val()),
+        vg = parseFloat($("#two_Vg").val()),
+        zg = parseFloat($("#two_Zg").val()),
+        zlr = parseFloat($("#two_Zlr").val()); //only supports real input for now
+
+    var voplus = (vg * zlr) / (zlr + zg);
+    var betalamda = (2 * pi * lamda); 
+    var bl = toDegrees(betalamda);
+
+    var volts = voplus + "e^-" + bl + " V"; //this is Vo+
+    var ampere = voplus/zg + "e^-" + bl + " A"; //this is Il
+
+    var period = (2*freq).toExponential();
+
+    var il = voplus/zg + "cos(pi*(" + period +  ")*t - " + bl + ")"; //ampere
+    $("#two_ans").val(il); //Time Domain Current Thru load
+}
+
+function useTL(){
+    var frequency = toNumber($("#three_freq").val()),
+        length = toNumber($("#three_l").val()),
+        ratio;
+
+    var ratio = length /  toWavelength(frequency);
+    if (ratio > 0.01){
+        $("#three_ans").val("Use TL theory, " + toWavelength(frequency) + " meters"); 
+        return true;
+    }else{
+        $("#three_ans").val("Don't use TL theory, " + toWavelength(frequency) + " meters"); 
+        return false;
+    }
+}
+
+function four(){
+    var llength = toNumber($("#four_length").val()),
+        Zo = toNumber($("#four_lineImpedence").val()),
+        Er = toNumber($("#four_relativePermittivity").val()),
+        Freq = toNumber($("#four_freq").val());
+
+    var vgC = toNumber($("#four_VgC").val());
+    var vgA = toNumber($("#four_VgA").val());
+    var vgDeg = toNumber($("#four_VgDeg").val());
+    var VgExp = parseFloat($("#four_VgExp").val());
+
+    var zl_r = toNumber($("#four_zl_r").val());
+    var zl_j = toNumber($("#four_zl_j").val());
+
+    var w =  Freq * pi * 2; 
+
+        //Lamda on the line
+        Up = c / Math.sqrt(Er);
+        Beta = w / Up;
+        Lamda = (2 * pi) / Beta; // good ans
+        $("#four_ans_lamda").val(Lamda); 
+
+        //reflection coeff
+        var realifier = makeReal([zl_r - Zo,zl_j],[zl_r + Zo,zl_j]);
+        real_comp = realifier.NumeratorReal / realifier.Denominator;
+        imag_comp = realifier.NumeratorImaginary / realifier.Denominator;
+        var reflectioncoeffLoad = toPolar(real_comp,imag_comp); //(Zl - Zo) / (Zl + Zo)
+        $("#four_ans_refLoad").val(reflectioncoeffLoad[0].toFixed(4) + " ∠-" + reflectioncoeffLoad[1].toFixed(4) + "°"); //crying and hoping it is worth it
+                                                                                                                         //2025 update - it was
+        
+        //Input Impedance
+        // Zi = Zo ( (Zl + j*Zo*tan(Bl)) / (Zo + j*Zo*tan(Bl)) )
+        //[Real, Imaginary]
+        var bl = (2*pi / Lamda) * llength;
+        //numerator Zl +jZ0*tan(bl)
+        var Zin_num_r = zl_r;
+        var Zin_num_j = Zo * Math.tan(bl) - zl_j;//
+
+        var Zin_demonR = zl_r * Math.tan(bl);
+        var Zin_denomJ = zl_j * Math.tan(bl);
+
+        Zin_demonJ = Zin_demonR;
+        Zin_demonR = Zo + Zin_denomJ;
+        
+        var Zin_ans = divideCartisian([Zin_num_r,Zin_num_j], [Zin_demonR,Zin_denomJ]); 
+        Zin_ans[0] = Zin_ans[0]*Zo;
+        Zin_ans[1] = Zin_ans[1]*Zo;
+        
+        /*
+        foilImaginary(groupA, groupB){
+    //(a + bi)(c + di)
+
+        var Zin_numR =  zl_r;
+        var Zin_numJ =  ((Zo * Math.tan(Beta)) - zl_j); 
+        
+        var Zin_denomR =  Zo + zl_j*Math.tan(Beta);
+        var Zin_denomJ =  zl_r * Math.tan(Beta);
+
+        var realifier_inputR = makeReal([Zin_numR, Zin_numJ],[Zin_denomR, Zin_denomJ]);
+        Zin_real_comp = Zo * ((realifier_inputR.NumeratorReal) / realifier_inputR.Denominator);
+        Zin_imag_comp = Zo * ((realifier_inputR.NumeratorImaginary) / realifier_inputR.Denominator);
+        */
+        $("#four_ans_inR").val(Zin_real_comp.toFixed(4) + " + j" + Zin_imag_comp.toFixed(4) + " Ohms");
+
+        //Input Voltage Vi = Vg*Zi / (Zi+Zg)
+        var voltagegen = toCartesian(vgC,vgDeg);
+        var Vi_numerator_real = (( voltagegen[0] * Zin_real_comp ) - (voltagegen[1] * Zin_imag_comp)); 
+        var Vi_numerator_imag = ((voltagegen[0] * Zin_imag_comp) + (Zin_real_comp  * voltagegen[1] ));
+
+        var Vi_denom_real = Zin_real_comp + voltagegen[0];
+        var Vi_denom_imag = Zin_imag_comp + voltagegen[1];
+
+        var realifier_Vi = makeReal([Vi_numerator_real, Vi_numerator_imag],[Vi_denom_real, Vi_denom_imag]);
+        var Vi_real = realifier.NumeratorReal / realifier_Vi.Denominator;
+        var Vi_imag = realifier.NumeratorImaginary / realifier_Vi.Denominator;
+        var Vi_ans = toPolar(Vi_real, Vi_imag); // not correct
+        $("#four_ansi").val("*** "+ Vi_ans[0].toFixed(4) + "  ∠-" + Vi_ans[1].toFixed(4) + "°");
+}
+function five(){
+    var tlr = toNumber($("#five_tlr").val()),
+        freq = toNumber($("#five_hz").val()),
+        tll = toNumber($("#five_tll").val()),
+        zlr = toNumber($("#five_zlr").val()),
+        zlj = toNumber($("#five_zlj").val());
+
+    var up = c; //air filled line
+    var Beta = (2*pi*freq)/up;
+    //This uses a simplified version of Zin = Zo * (Zl + jtan(B*l)) / (1+jZl*tan(bl))
+    //bl = 2*pi*tll
+    var zl_r = zlr/tlr; 
+    var zl_j = zlj/tlr; 
+    //this is hacky. don't trust, but it kinda works so I am leaving it
+    var ZinR = tlr * zl_r;
+    var ZinJ = tlr * zl_j;
+    $("#five_ans").val(ZinR.toFixed(4) + " + j" + ZinJ.toFixed(4) + " Ohms");
+}
+function Six(){
+    var Vgc = toNumber($("#six_vgc").val()),
+        Vgw = toNumber($("#six_vgw").val()),
+        VgE = toNumber($("#six_vgexp").val()),
+        Zg = toNumber($("#six_zg").val()),
+        Ztl = toNumber($("#six_ztl").val()), 
+        l = toNumber($("#six_l").val()),
+        ZlR = toNumber($("#six_zlr").val()),
+        ZlJ = toNumber($("#six_zlj").val()); 
+
+        var beta = (2*pi* Math.pow(10,VgE)) /c; //radsec
+       // function makeReal(Num, Denom){
+    //[Real, Imaginary]
+        var Zin_num_j = ZlJ*Math.tan(l * beta) - ZlJ;
+        var Zin_num_r = ZlR;
+
+        var Zin_den_r = Ztl + ZlJ*Math.tan(l * beta);
+        var Zin_den_j = ZlR*Math.tan(l * beta); //perfect up to here
+
+        var ZinSimp = makeReal([Zin_num_r,Zin_num_j], [Zin_den_r,Zin_den_j]);
+        var Zin_real = Ztl * ZinSimp.NumeratorReal / ZinSimp.Denominator;
+        var Zin_imag = Ztl * ZinSimp.NumeratorImaginary / ZinSimp.Denominator;
+
+        $("#six_ans_zin").val( Zin_real.toFixed(4) + " + j" + Zin_imag.toFixed(4) ); //perfect Zin
+        //Vi = Vg * Zin / (Zg + Zin)
+        Vin_Num_Real = Vgc * Zin_real;
+        Vin_Num_Imag = Vgc * Zin_imag;
+
+        Vin_denom_Real = Zg + Zin_real;
+        Vin_denom_Imag = Zin_imag;
+
+        var ViSimp = makeReal([Vin_Num_Real,Vin_Num_Imag], [Vin_denom_Real,Vin_denom_Imag]);
+        var Vi_real = ViSimp.NumeratorReal / ViSimp.Denominator;
+        var Vi_imag = ViSimp.NumeratorImaginary / ViSimp.Denominator;
+        var Vi_Phasor = toPolar(Vi_real,Vi_imag);
+        $("#six_ans").val(Vi_Phasor[0].toFixed(4) + "e^(j" + Vi_Phasor[1].toFixed(4) + ")");
+
+
+}
+</script>
+</head>
+<body onload="openCity(event, 'calc')">
+    <h2>Electromagnetics</h2>
+    <div class="tab">
+        <button id="primaryUI" class="tablinks" onclick="openCity(event, 'calc')">Calculators</button>
+        <button class="tablinks" onclick="openCity(event, 'sc')">Smith Chart</button>
+      </div>
+ <div id="calc" class="tabcontent">      
+    <div id="One">
+        <p><b>1.</b> At an operating frequency of <input value="300M" id ="one_MHz" type="text">Hz, it is desired to use a 
+            section of a lossless <input value="47" id ="one_tlR" type="text">Ohm transmission line terminated in a short 
+            circuit to construct an equivalent load with reactance X = <input value="39" id ="one_load" type="text">Ohms.
+            If the phase velocity of the line is <input value=".5" id ="one_c" type="text">c, what is the shortest possible line length in cm that would 
+            exhibit the desired reactance at its input?
+            </p>
+        <button onclick="one()">Calculate</button><br>
+        <input id="one_ans" type="text">cm<br>
+        <hr>
+    </div> 
+
+    <div id="Two">
+        <p><b>2.</b> A 50 Ohm lossless line of length l = <input size="1" value=".375" id ="two_lamda" type="text">(lamda) connects a
+            <input value="400M" size="1" id ="two_hz" type="text">Hz generator with Vg = <input value="400" size="1" id ="two_Vg" type="text">V and 
+            Zg=<input size="1" id ="two_Zg" value="50" type="text">Ohm to a load ZL. Determine the time-domain current through
+            the load for ZL = <input value="50" size="1" id ="two_Zlr" type="text">Ohm.(only support real/nonzero values for Zl)<br>
+            </p>
+        <button onclick="two()">Calculate</button><br>
+        <input id="two_ans" type="text"><br>
+        <hr>
+    </div> 
+
+    <div id="Three">
+        <p><b>3.</b>
+            A transmission line of length l = <input value="20c" id ="three_l" type="text">m
+             connects a load to a sinusoidal voltage source with an oscillation frequency
+             f = <input id ="three_freq" value="600M" type="text">Hz. Assuming the velocity of wave propagation on the line is c = 3 x 10^8 m/s, is it reasonable
+              to ignore the presence of the transmission line in the solution of the circuit:
+        </p>
+        <button onclick="useTL()">Calculate</button><br>
+        <input size="50" id="three_ans" type="text"><br>
+        <hr>
+    </div> 
+
+    <div id="Four">
+        <p><b>4.</b>
+            A <input id ="four_length" size="3" value="6" type="text">m section of <input id ="four_lineImpedence" size="3" value="150" type="text"> Ohm lossless line is driven by a source with 
+            Vg=<input id ="four_VgC" size="3" value="5" type="text">cos(<input id ="four_VgA" size="1" value="8" type="text">π*10^<input id ="four_VgExp" size="1" value="7" type="text"> t-<input id ="four_VgDeg" size="1" value="30" type="text">deg) and 
+            Zg = <input id ="four_relativePermittivit2y" size="3" value="150" type="text"> Ω. If the line, which has a 
+            relative permittivity ε = <input id ="four_relativePermittivity" size="3" value="2.25" type="text">,is terminated in a load 
+            ZL = (<input id ="four_zl_r" size="1" value="150" type="text"> - j<input id ="four_zl_j" size="1" value="50" type="text">) Ohms. Assuming that 
+            f = <input id ="four_freq" size="3" value="6M" type="text">Hz
+        </p>
+        <button onclick="four()">Calculate</button><br>
+        Line Lamda: <input size="20" id="four_ans_lamda" type="text">m<br>
+        Reflection Coefficient Load(Rl): <input size="20" id="four_ans_refLoad" type="text"><br>
+        <br>2025 note: Zi, Vi are wrong so I have disabled the code while I figure out a fix.  
+        Input Impedance(Zi): <input size="20" id="four_ans_inR" type="text"><br>
+        Input Voltage(Vi): <input size="20" id="four_ansi" type="text"><br>
+        <hr>
+    </div> 
+
+    <div id="Five">
+        <p><b>5.</b>
+            At an operating frequency of <input id ="five_hz" size="3" value="300M" type="text">Hz, a lossless <input id ="five_tlr" size="3" value="50" type="text"> Ohm air-spaced
+            transmission line <input id ="five_tll" size="3" value="2.5" type="text">m in length is terminated with an impedance ZL =
+            <input id ="five_zlr" size="3" value="40" type="text">+j<input id ="five_zlj" size="3" value="20" type="text">Ohms. Find the input impedance and give the real component as
+            the answer.
+        </p>
+        <button onclick="five()">Calculate</button><br>
+        Z<sub>in</sub>=<input size="50" id="five_ans" type="text"><br>
+        <hr>
+    </div> 
+
+    <div id="Six">
+        <p><b>6.</b>
+            A voltage generator with Vg=<input id ="six_vgc" size="3" value="5" type="text">cos(<input id ="six_vgw" size="3" value="2" type="text">*pi* 10^<input id ="six_vgexp" size="3" value="9" type="text"> t) 
+            and internal impedance Zg = <input id ="six_zg" size="3" value="50" type="text">Ohms
+             is connected to a <input id ="six_ztl" size="3" value="50" type="text">ohms lossless air-spaced transmission line. The line length
+              is <input id ="six_l" size="5" value="5c" type="text">m and the line is terminated in a load with impedance ZL = (<input id ="six_zlr" size="3" value="125" type="text">
+               - j<input id ="six_zlj" size="3" value="50" type="text">) Ohms.
+              Calculate the magnitude of input voltage and after rounding to the whole number Vi 
+        </p>
+        <button onclick="Six()">Calculate</button><br>
+        Input Voltage(Zin): <input size="20" id="six_ans_zin" type="text"><br>
+        Input Voltage(Vi): <input size="20" id="six_ans" type="text"><br>
+        <hr>
+    </div> 
+
+</div> 
+<div onload="" id="sc" class="tabcontent">
+    <section class="section">
+        <button onclick="reset()">Reset</button> <button onclick="getValues()">Get Values</button> <button onclick="setValues()">Set Values</button><br>
+            Reflection Coefficient : <input type="number" id="r_real"> + j<input type="number" id="r_imaginary"><br>
+            Normalized Load impedance: : <input type="number" id="z_real"> + j<input type="number" id="z_imaginary"><br><br>
+            (2025 Publication Note - This was broken when transitioning off my local machine - no way to hook my pthon code investigating alternatives)
+      <div class="container">
+        <br>
+        <smith-chart id="chart" r="[0,0]"></smith-chart>
+        <br>
+        <br>
+      </div>
+    </section>
+</div>
+
+
+</body>
+</html>
