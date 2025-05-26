@@ -38,6 +38,38 @@
       const minY = Math.min(...dataLog.map(d => d[1]));
       const maxY = Math.max(...dataLog.map(d => d[1]));
 
+        // Draw grid lines
+      ctx.strokeStyle = "#ddd";
+      ctx.lineWidth = 1;
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "#000";
+
+      // Vertical grid lines (log scale frequency)
+    for (let f = Math.pow(10, Math.ceil(minX)); f <= Math.pow(10, Math.floor(maxX)); f *= 10) {
+      for (let i = 1; i < 10; i++) {
+        let freq = f * i;
+        if (freq > Math.pow(10, maxX)) break;
+        let x = ((Math.log10(freq) - minX) / (maxX - minX)) * width;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+        if (i === 1) ctx.fillText(`${freq >= 1000 ? (freq / 1000) + 'k' : freq}`, x + 2, height - 5);
+      }
+    }
+
+  // Horizontal grid lines (linear dB or phase scale)
+  const ySteps = 10;
+  for (let i = 0; i <= ySteps; i++) {
+    let yVal = minY + (i / ySteps) * (maxY - minY);
+    let y = height - ((yVal - minY) / (maxY - minY)) * height;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(width, y);
+    ctx.stroke();
+    ctx.fillText(yVal.toFixed(1), 5, y - 2);
+  }
+
       canvas.onmousemove = e => {
         const rect = canvas.getBoundingClientRect();
         const mx = e.clientX - rect.left;
@@ -66,28 +98,49 @@
     }
 
     function simulate() {
-      const maxHz = toNumber(document.getElementById("max_hz").value);
-      const bins = parseInt(document.getElementById("bins").value);
-      const R = toNumber(document.getElementById("r_1").value);
-      const C = toNumber(document.getElementById("c_1").value);
-      const type = document.getElementById("filter_type").value;
+  const maxHz = toNumber(document.getElementById("max_hz").value);
+  const bins = parseInt(document.getElementById("bins").value);
+  const R = toNumber(document.getElementById("r_1").value);
+  const C = toNumber(document.getElementById("c_1").value);
+  const type = document.getElementById("filter_type").value;
 
-      const bode = [];
-      const phase = [];
-      for (let i = 1; i <= bins; i++) {
-        const f = i * maxHz / bins;
-        const omegaRC = 2 * Math.PI * f * R * C;
-        let mag, phaseDeg;
-        if (type === 'lpf') {
-          mag = 1 / Math.sqrt(1 + omegaRC ** 2);
-          phaseDeg = -Math.atan(omegaRC) * (180 / Math.PI);
-        } else {
-          mag = omegaRC / Math.sqrt(1 + omegaRC ** 2);
-          phaseDeg = 90 - Math.atan(1 / omegaRC) * (180 / Math.PI);
-        }
-        bode.push([f, 20 * Math.log10(mag)]);
-        phase.push([f, phaseDeg]);
-      }
+  const bode = [];
+  const phase = [];
+
+  const f0 = 1 / (2 * Math.PI * R * C); // center frequency
+  const Q = 1; // Quality factor (for simplicity)
+
+  for (let i = 1; i <= bins; i++) {
+    const f = i * maxHz / bins;
+    const omega = 2 * Math.PI * f;
+    const omega0 = 2 * Math.PI * f0;
+    const omegaRC = omega * R * C;
+
+    let mag, phaseDeg;
+
+    switch (type) {
+      case 'lpf':
+        mag = 1 / Math.sqrt(1 + omegaRC ** 2);
+        phaseDeg = -Math.atan(omegaRC) * (180 / Math.PI);
+        break;
+      case 'hpf':
+        mag = omegaRC / Math.sqrt(1 + omegaRC ** 2);
+        phaseDeg = 90 - Math.atan(1 / omegaRC) * (180 / Math.PI);
+        break;
+      case 'bpf':
+        mag = (omega / omega0) / Math.sqrt((1 - (omega / omega0) ** 2) ** 2 + (omega / (omega0 * Q)) ** 2);
+        phaseDeg = Math.atan2((omega / (omega0 * Q)), 1 - (omega / omega0) ** 2) * (180 / Math.PI);
+        break;
+      case 'bsf':
+        mag = Math.sqrt((1 - (omega / omega0) ** 2) ** 2 + (omega / (omega0 * Q)) ** 2) /
+              Math.sqrt((1 - (omega / omega0) ** 2) ** 2 + ((omega / (omega0 * Q)) ** 2) * ((omega / omega0) ** 2));
+        phaseDeg = Math.atan2(-(omega / (omega0 * Q)) * (omega / omega0), 1 - (omega / omega0) ** 2) * (180 / Math.PI);
+        break;
+    }
+
+    bode.push([f, 20 * Math.log10(mag)]);
+    phase.push([f, phaseDeg]);
+  }
 
       plot(document.getElementById("bode_canvas"), bode, "Magnitude (dB)", "blue");
       plot(document.getElementById("phase_canvas"), phase, "Phase (deg)", "red");
@@ -114,6 +167,8 @@
   <select id='filter_type'>
     <option value='lpf'>Lowpass</option>
     <option value='hpf'>Highpass</option>
+    <option value='bpf'>Bandpass</option>
+    <option value='bsf'>Bandstop</option>
   </select><br>
   <label>R<sub>1</sub></label><input type="text" value="5k" id="r_1"> Ohms<br>
   <label>C<sub>1</sub></label><input type="text" value="100n" id="c_1"> F<br>
